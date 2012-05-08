@@ -14,4 +14,7 @@ Gem::Specification.new do |gem|
   gem.name          = "tagalong"
   gem.require_paths = ["lib"]
   gem.version       = Tagalong::VERSION
+
+  gem.add_dependency "activerecord"
+  gem.add_development_dependency "rspec"
 end
