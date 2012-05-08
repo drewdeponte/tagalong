@@ -16,5 +16,6 @@ Gem::Specification.new do |gem|
   gem.version       = Tagalong::VERSION
 
   gem.add_dependency "activerecord"
+  gem.add_development_dependency "sqlite3"
   gem.add_development_dependency "rspec"
 end
