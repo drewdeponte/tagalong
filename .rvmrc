@@ -1,0 +1,172 @@
+#!/usr/bin/env bash
+
+# Check to see if brew is installed
+function check_for_brew() {
+  printf "Checking for brew - "
+  which brew > /dev/null
+  if [ $? -ne 0 ]; then
+    echo "NOT found"
+    echo "brew, could not be found!"
+    echo "Please install it using the instructions found on their site (http://mxcl.github.com/homebrew/).\n"
+    return 1
+  else
+    echo "found"
+  fi
+  return 0
+}
+
+# Given a brew package as the first argument check if that package has already been installed.
+function check_for_brew_package() {
+  printf "Checking for $1 - "
+  brew list | grep $1 > /dev/null
+  if [ $? -ne 0 ]; then
+    echo "NOT found"
+    echo "$1, could not be found."
+    echo "Please run brew update && brew install $1 to install it.\n"
+    return 1
+  else
+    echo "found"
+  fi
+  return 0
+}
+
+# This method takes two arguments. The first argument is the name of the gem to check for and install. The second argument is
+# the version of the gem to check for and install. Both arguments are required. If the gem is already installed an exit status
+# of 0 is set, if an install is required an exit status of 1 is set.
+function install_gem_if_not_found() {
+  printf "Checking for gem $1 ($2) - "
+  gem list | grep "$1.*$2.*" > /dev/null
+  if [ $? -ne 0 ]; then
+    echo "NOT found, installing for you"
+    gem install $1 -v $2
+    return 1
+  else
+    echo "found"
+  fi
+  return 0
+}
+
+function load_rvm_as_a_function() {
+  # Here I load rvm as a bash function rather than a binary. I do
+  # this because the binary version is limited and won't properly
+  # create or switch to gemsets. This was added specifically to
+  # handle the case where .rvmrc is loaded via rvm rvmrc load in
+  # a Capistrano deploy. However, it doesn't seem to hurt the
+  # normal dev workflow so I am just leaving it here. For more info
+  # on binary/function mode of RVM refer to the following url:
+  # http://beginrescueend.com/workflow/scripting/
+  if [[ -s "$HOME/.rvm/scripts/rvm" ]] ; then
+    # First try to load from a user install
+    source "$HOME/.rvm/scripts/rvm"
+  elif [[ -s "/usr/local/rvm/scripts/rvm" ]] ; then
+    # Then try to load from a root install
+    source "/usr/local/rvm/scripts/rvm"
+  else
+    printf "ERROR: An RVM installation was not found.\n"
+    return 1
+  fi
+  return 0
+}
+
+# Attempt to load the specified RVM environment where the RVM environment
+# is the first argument passed to this method when called in the form of
+# "ruby-1.9.3-p0@rpp_web_app"
+function load_rvm_environment() {
+  #
+  # First we attempt to load the desired environment directly from the environment
+  # file. This is very fast and efficient compared to running through the entire
+  # CLI and selector. If you want feedback on which environment was used then
+  # insert the word 'use' after --create as this triggers verbose mode.
+  #
+
+  if [[ -d "${rvm_path:-$HOME/.rvm}/environments" && -s "${rvm_path:-$HOME/.rvm}/environments/$1" ]]
+  then
+    source "${rvm_path:-$HOME/.rvm}/environments/$1"
+
+    if [[ -s "${rvm_path:-$HOME/.rvm}/hooks/after_use" ]]
+    then
+      source "${rvm_path:-$HOME/.rvm}/hooks/after_use"
+    fi
+    return 0
+  else
+    #If the environment file has not yet been created, use the RVM CLI to select.
+    if ! rvm --create  "$1"
+    then
+      echo "Failed to create RVM environment '$1'."
+      return 1
+    fi
+    return 0
+  fi
+
+  #
+  # If you use an RVM gemset file to install a list of gems (*.gems), you can have
+  # it be automatically loaded. Uncomment the following and adjust the filename if
+  # necessary.
+  #
+  # filename=".gems"
+  # if [[ -s "$filename" ]]
+  # then
+  #   rvm gemset import "$filename" | grep -v already | grep -v listed | grep -v complete | sed '/^$/d'
+  # fi  
+}
+
+# if [ `uname -s` == "Darwin" ]; then # we assume we are on a Mac OS X dev box
+#   missing_brew=0
+#   missing_brew_packages=0
+
+#   check_for_brew; if [ $? -ne 0 ]; then missing_brew=1; fi
+#   check_for_brew_package "readline"; if [ $? -ne 0 ]; then missing_brew_packages=1; fi
+#   check_for_brew_package "imagemagick"; if [ $? -ne 0 ]; then missing_brew_packages=1; fi
+#   check_for_brew_package "qt"; if [ $? -ne 0 ]; then missing_brew_packages=1; fi
+#   check_for_brew_package "wkhtmltopdf"; if [ $? -ne 0 ]; then missing_brew_packages=1; fi
+#   check_for_brew_package "mysql"; if [ $? -ne 0 ]; then missing_brew_packages=1; fi
+#   check_for_brew_package "redis"; if [ $? -ne 0 ]; then missing_brew_packages=1; fi
+
+#   if [ $missing_brew_packages -ne 0 ] || [ $missing_brew -ne 0 ]; then
+#     echo "YOU ARE MISSING THE ABOVE PACKAGES! YOU ARE NOT IN THE CORRECT RVM RUBY VERSION GEMSET COMBO!"
+#     cur_rvm=$(rvm current)
+#     echo "The rvm you are currently using is: $cur_rvm\n"
+
+#     echo "Please install them using the provided instructions above."
+#     echo "Once completed cd out of this directory and back into this directory to have this project specific .rvmrc script run again."
+#     return 1;
+#   fi
+# fi
+
+load_rvm_as_a_function; if [ $? -ne 0 ]; then return 1; fi
+#
+# Note: In order for this script to work, specifically the creation
+# of the gemset below with the rvm --create call, the user executing
+# this needs to have the following in their ~/.rvmrc:
+#
+# export rvm_is_not_a_shell_function=0
+#
+# This is only really needed for when it is being run via Capistrano
+# so it only needs to be in the deployment users ~/.rvmrc on
+# boxes you will be deploying to. This with the function loading
+# above is the magic that makes the rvm --create work in this script
+# when it is loaded via Capistrano.
+
+#
+# Note: We also use the following options in our deployment users ~/.rvmrc
+# files handle trusting, auto install of new ruby versions, auto creation
+# of gemsets, etc. The example of the full ~/.rvmrc file is as follows:
+#
+# export rvm_path="/home/rpi/.rvm"
+# export rvm_is_not_a_shell_function=0
+# rvm_trust_rvmrcs_flag=1
+# rvm_install_on_use_flag=1
+# rvm_gemset_create_on_use_flag=1
+#
+
+# This is an RVM Project .rvmrc file, used to automatically load the ruby
+# development environment upon cd'ing into the directory
+
+# First we specify our desired <ruby>[@<gemset>], the @gemset name is optional.
+environment_id="ruby-1.9.3-p125@tagalong"
+
+load_rvm_environment $environment_id; if [ $? -ne 0 ]; then return 1; fi
+
+# At this point we should have the proper RVM environment and gemset loaded
+cur_rvm=$(rvm current)
+echo "Entered RVM environment '$cur_rvm'"
