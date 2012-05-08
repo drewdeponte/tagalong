@@ -21,14 +21,14 @@ ActiveRecord::Schema.define :version => 0 do
 
   add_index "tagalong_tags", ["owner_id", "owner_type"], :name => "index_tagalong_tags_on_owner_id_and_owner_type"
 
-  create_table "contact", :force => true do |t|
+  create_table "contacts", :force => true do |t|
     t.string "name"
     t.string "phone"
     t.datetime "created_at"
     t.datetime "udpated_at"
   end
 
-  create_table "user", :force => true do |t|
+  create_table "users", :force => true do |t|
     t.string "email"
     t.string "name"
     t.datetime "created_at"
