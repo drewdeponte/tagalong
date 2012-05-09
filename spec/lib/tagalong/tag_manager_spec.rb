@@ -85,12 +85,12 @@ describe Tagalong::TagManager do
   describe "#owner_has_tag?" do
     it "returns the matching TagalongTag if the owner already has the tag" do
       cm_contact_tag = stub('cm_contact_tag')
-      @owner.stub_chain(:cm_contact_tags, :find_by_name).and_return(cm_contact_tag)
+      @owner.stub_chain(:tagalong_tags, :find_by_name).and_return(cm_contact_tag)
       @tag_manager.owner_has_tag?("foo_tag").should == cm_contact_tag
     end
 
     it "returns nil if the owner does NOT already have the tag" do
-      @owner.stub_chain(:cm_contact_tags, :find_by_name).and_return(nil)
+      @owner.stub_chain(:tagalong_tags, :find_by_name).and_return(nil)
       @tag_manager.owner_has_tag?("foo_tag").should be_nil
     end
   end
@@ -98,12 +98,12 @@ describe Tagalong::TagManager do
   describe "#contact_has_tag?" do
     it "returns matching TagalongTag if the contact is already associated to the tag" do
       cm_contact_tag = stub('cm_contact_tag')
-      @taggable.stub_chain(:cm_contact_tags, :find_by_name).and_return(cm_contact_tag)
+      @taggable.stub_chain(:tagalong_tags, :find_by_name).and_return(cm_contact_tag)
       @tag_manager.contact_has_tag?("foo_tag").should == cm_contact_tag
     end
 
     it "returns nil, if the tag is NOT already associated with the contact" do
-      @taggable.stub_chain(:cm_contact_tags, :find_by_name).and_return(nil)
+      @taggable.stub_chain(:tagalong_tags, :find_by_name).and_return(nil)
       @tag_manager.contact_has_tag?("foo_tag").should be_nil
     end
   end
@@ -135,7 +135,7 @@ describe Tagalong::TagManager do
     it "deletes the TagalongTagging record that associates the given tag with the given contact" do
       cm_contact_tag = stub('cm_contact_tag', :id => 111)
       cm_contact_tagging = mock('cm_contact_tagging')
-      TagalongTagging.stub(:find_by_cm_contact_tag_id_and_cm_contact_id).with(111, @taggable.id).and_return(cm_contact_tagging)
+      TagalongTagging.stub(:find_by_tagalong_tag_id_and_taggable_id).with(111, @taggable.id).and_return(cm_contact_tagging)
       @tag_manager.stub(:decrement_tag_number_of_references)
       cm_contact_tagging.should_receive(:delete)
       @tag_manager.send(:disassociate_tag_from_contact, cm_contact_tag, @taggable)
@@ -144,7 +144,7 @@ describe Tagalong::TagManager do
     it "decrements the reference count of the tag" do
       cm_contact_tag = stub('cm_contact_tag', :id => 111)
       cm_contact_tagging = stub('cm_contact_tagging', :delete => nil)
-      TagalongTagging.stub(:find_by_cm_contact_tag_id_and_cm_contact_id).and_return(cm_contact_tagging)
+      TagalongTagging.stub(:find_by_tagalong_tag_id_and_taggable_id).and_return(cm_contact_tagging)
       @tag_manager.should_receive(:decrement_tag_number_of_references).with(cm_contact_tag)
       @tag_manager.send(:disassociate_tag_from_contact, cm_contact_tag, @taggable)
     end
