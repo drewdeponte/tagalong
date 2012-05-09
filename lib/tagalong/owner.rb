@@ -6,7 +6,10 @@ module Tagalong
 
     module ClassMethods
       def tagalong_owner
-        class_eval { include InstanceMethods }
+        class_eval do
+          has_many :tagalong_tags, :class_name => 'Tagalong::TagalongTag', :foreign_key => 'owner_id'
+          include Tagalong::Owner::InstanceMethods
+        end
       end
     end
 

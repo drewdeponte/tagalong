@@ -26,15 +26,15 @@ module Tagalong
     end
 
     def owners_tags
-      @managed_owner.cm_contact_tags.order('cm_contact_tags.number_of_references DESC').map { |r| r.name }
+      @managed_owner.tagalong_tags.order('tagalong_tags.number_of_references DESC').map { |r| r.name }
     end
 
     def owner_has_tag?(name)
-      @managed_owner.cm_contact_tags.find_by_name(name)
+      @managed_owner.tagalong_tags.find_by_name(name)
     end
 
     def contact_has_tag?(name)
-      @managed_contact.cm_contact_tags.find_by_name(name)
+      @managed_contact.tagalong_tags.find_by_name(name)
     end
 
     private
@@ -49,7 +49,7 @@ module Tagalong
     end
 
     def disassociate_tag_from_contact(cm_contact_tag, contact)
-      contact_tagging = TagalongTagging.find_by_cm_contact_tag_id_and_cm_contact_id(cm_contact_tag.id, contact.id)
+      contact_tagging = TagalongTagging.find_by_tagalong_tag_id_and_taggable_id(cm_contact_tag.id, contact.id)
       contact_tagging.delete
       decrement_tag_number_of_references(cm_contact_tag)
     end
