@@ -14,8 +14,18 @@ module Tagalong
     end
 
     module InstanceMethods
-      def list_tags_by_usage
-        puts "would list tags by usage owned by #{self.inspect}"
+      def tag(taggable_obj, tag_name)
+        tag_manager = Tagalong::TagManager.new(taggable_obj, self)
+        tag_manager.add_tag(tag_name)
+      end
+
+      def untag(taggable_obj, tag_name)
+        tag_manager = Tagalong::TagManager.new(taggable_obj, self)
+        # this needs to remove the tag associates from the taggable object where the owner matches self
+        tag_manager.remove_tag(tag_name) # FIX: This function currently doesn't take into consideration the owner and it needs to
+      end
+
+      def tags
       end
     end
   end

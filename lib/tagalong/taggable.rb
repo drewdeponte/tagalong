@@ -15,12 +15,7 @@ module Tagalong
     end
 
     module InstanceMethods
-      def add_tag(tag_name)
-        puts "woot tag #{tag_name} would be added"
-      end
-
-      def remove_tag(tag_name)
-        puts "woot tag #{tag_name} would be removed"
+      def tags
       end
     end
   end
