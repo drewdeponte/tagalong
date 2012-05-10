@@ -13,15 +13,15 @@ module Tagalong
           associate_tag_with_contact(owner_matched_tag, @managed_contact)
         end
       else
-        cm_contact_tag = create_tag_for_owner(name, @managed_owner)
+        cm_contact_tag = create_tag_for_tagger(name, @managed_owner)
         associate_tag_with_contact(cm_contact_tag, @managed_contact)
       end
     end
 
     def remove_tag(name)
-      contact_matched_tag = contact_has_tag?(name)
-      if contact_matched_tag
-        disassociate_tag_from_contact(contact_matched_tag, @managed_contact)
+      owner_matched_tag = owner_has_tag?(name)
+      if owner_matched_tag && contact_has_tag?(name)
+        disassociate_tag_from_contact(owner_matched_tag, @managed_contact)
       end
     end
 
@@ -39,18 +39,19 @@ module Tagalong
 
     private
 
-    def create_tag_for_owner(name, owner)
-      return TagalongTag.create!(:owner_id => owner.id, :owner_type => owner.class, :name => name)
+    def create_tag_for_tagger(name, tagger)
+      return TagalongTag.create!(:tagger_id => tagger.id, :tagger_type => tagger.class.to_s, :name => name)
     end
     
     def associate_tag_with_contact(cm_contact_tag, contact)
-      TagalongTagging.create!(:taggable_id => contact.id, :taggable_type => contact.class, :tagalong_tag_id => cm_contact_tag.id)
+      TagalongTagging.create!(:taggable_id => contact.id, :taggable_type => contact.class.to_s, :tagalong_tag_id => cm_contact_tag.id)
       increment_tag_number_of_references(cm_contact_tag)
     end
 
     def disassociate_tag_from_contact(cm_contact_tag, contact)
       contact_tagging = TagalongTagging.find_by_tagalong_tag_id_and_taggable_id(cm_contact_tag.id, contact.id)
-      contact_tagging.delete
+      TagalongTagging.destroy(contact_tagging.id)
+      contact.reload
       decrement_tag_number_of_references(cm_contact_tag)
     end
 

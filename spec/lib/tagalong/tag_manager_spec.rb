@@ -17,14 +17,14 @@ describe Tagalong::TagManager do
       end
 
       it "creates a tag for the owner" do
-        @tag_manager.should_receive(:create_tag_for_owner).with("foo_tag", @owner)
+        @tag_manager.should_receive(:create_tag_for_tagger).with("foo_tag", @owner)
         @tag_manager.stub(:associate_tag_with_contact)
         @tag_manager.add_tag("foo_tag")
       end
 
       it "associates the created owner tag with the managed contact" do
         cm_contact_tag = stub('cm_contact_tag', :id => 98)
-        @tag_manager.stub(:create_tag_for_owner).and_return(cm_contact_tag)
+        @tag_manager.stub(:create_tag_for_tagger).and_return(cm_contact_tag)
         @tag_manager.should_receive(:associate_tag_with_contact).with(cm_contact_tag, @taggable)
         @tag_manager.add_tag("foo_tag")
       end
@@ -68,14 +68,16 @@ describe Tagalong::TagManager do
   end
 
   describe "#remove_tag" do
-    it "disassociates the tag from the managed contact if currently associated" do
+    it "disassociates the tag from the managed contact if belongs to tagger and is currently associated" do
       cm_contact_tag = stub('cm_contact_tag')
+      @tag_manager.stub(:owner_has_tag?).and_return(cm_contact_tag)
       @tag_manager.stub(:contact_has_tag?).and_return(cm_contact_tag)
       @tag_manager.should_receive(:disassociate_tag_from_contact).with(cm_contact_tag, @taggable)
       @tag_manager.remove_tag("foo_tag")
     end
 
     it "should NOT dissassociate the tag from the managed contact if it is NOT associated" do
+      @tag_manager.stub(:owner_has_tag?).and_return(stub)
       @tag_manager.stub(:contact_has_tag?).and_return(nil)
       @tag_manager.should_not_receive(:disassociate_tag_from_contact)
       @tag_manager.remove_tag("foo_tag")
@@ -108,10 +110,10 @@ describe Tagalong::TagManager do
     end
   end
 
-  describe "#create_tag_for_owner" do
-    it "creates a TagalongTag record associated with the owner with the given name" do
-      TagalongTag.should_receive(:create!).with({ :owner_id => @owner.id, :owner_type => "User", :name => "hoopty" })
-      @tag_manager.send(:create_tag_for_owner, "hoopty", @owner)
+  describe "#create_tag_for_tagger" do
+    it "creates a TagalongTag record with the given name, associated with the tagging object" do
+      TagalongTag.should_receive(:create!).with({ :tagger_id => @owner.id, :tagger_type => "User", :name => "hoopty" })
+      @tag_manager.send(:create_tag_for_tagger, "hoopty", @owner)
     end
   end
 

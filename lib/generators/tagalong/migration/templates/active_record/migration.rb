@@ -3,14 +3,14 @@ class TagalongMigration < ActiveRecord::Migration
     create_table :tagalong_tags do |t|
       t.string :name
       t.integer :number_of_references
-      t.integer :owner_id
-      t.string :owner_type
+      t.integer :tagger_id
+      t.string :tagger_type
 
       t.timestamps
     end
 
-    add_index :tagalong_tags, :owner_id
-    add_index :tagalong_tags, :owner_type
+    add_index :tagalong_tags, :tagger_id
+    add_index :tagalong_tags, :tagger_type
 
     create_table :tagalong_taggings do |t|
       t.integer :tagalong_tag_id

@@ -1,14 +1,14 @@
 module Tagalong
-  module Owner
+  module Tagger
     def self.included(base)
-      base.extend ClassMethods
+      base.extend Tagalong::Tagger::ClassMethods
     end
 
     module ClassMethods
-      def tagalong_owner
+      def tagalong_tagger
         class_eval do
-          has_many :tagalong_tags, :class_name => 'Tagalong::TagalongTag', :foreign_key => 'owner_id'
-          include Tagalong::Owner::InstanceMethods
+          has_many :tagalong_tags, :class_name => 'Tagalong::TagalongTag', :as => :tagger
+          include Tagalong::Tagger::InstanceMethods
         end
       end
     end
@@ -21,8 +21,7 @@ module Tagalong
 
       def untag(taggable_obj, tag_name)
         tag_manager = Tagalong::TagManager.new(taggable_obj, self)
-        # this needs to remove the tag associates from the taggable object where the owner matches self
-        tag_manager.remove_tag(tag_name) # FIX: This function currently doesn't take into consideration the owner and it needs to
+        tag_manager.remove_tag(tag_name)
       end
 
       def tags

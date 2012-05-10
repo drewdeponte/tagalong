@@ -30,9 +30,9 @@ describe "TagManager Integration" do
 
   describe "#owners_tags" do
     it "list managed owners tags in order of most to least referenced" do
-      Tagalong::TagalongTag.create!(:owner_id => @user.id, :name => "kitty", :number_of_references => 20)
-      Tagalong::TagalongTag.create!(:owner_id => @user.id, :name => "bar", :number_of_references => 5)
-      Tagalong::TagalongTag.create!(:owner_id => @user.id, :name => "foo", :number_of_references => 10)
+      Tagalong::TagalongTag.create!(:tagger_id => @user.id, :name => "kitty", :number_of_references => 20)
+      Tagalong::TagalongTag.create!(:tagger_id => @user.id, :name => "bar", :number_of_references => 5)
+      Tagalong::TagalongTag.create!(:tagger_id => @user.id, :name => "foo", :number_of_references => 10)
       @contact_tag_manager.owners_tags.should == ["kitty", "foo", "bar"]
     end
   end

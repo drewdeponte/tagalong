@@ -11,15 +11,15 @@ ActiveRecord::Schema.define :version => 0 do
   add_index "tagalong_taggings", ["taggable_id", "taggable_type"], :name => "index_tagalong_taggings_on_taggable_id_and_taggable_type"
 
   create_table "tagalong_tags", :force => true do |t|
-    t.integer "owner_id", :limit => 11
-    t.integer "number_of_references", :limit => 11
-    t.string "owner_type"
+    t.integer "tagger_id", :limit => 11
+    t.string "tagger_type"
     t.string "name"
+    t.integer "number_of_references", :limit => 11
     t.datetime "created_at"
     t.datetime "updated_at"
   end
 
-  add_index "tagalong_tags", ["owner_id", "owner_type"], :name => "index_tagalong_tags_on_owner_id_and_owner_type"
+  add_index "tagalong_tags", ["tagger_id", "tagger_type"], :name => "index_tagalong_tags_on_tagger_id_and_tagger_type"
 
   create_table "contacts", :force => true do |t|
     t.string "name"
