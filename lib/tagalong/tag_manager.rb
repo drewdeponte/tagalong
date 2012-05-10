@@ -1,40 +1,40 @@
 module Tagalong
   class TagManager
-    def initialize(contact, owner)
-      @managed_contact = contact
-      @managed_owner = owner
+    def initialize(taggable, tagger)
+      @taggable = taggable
+      @tagger = tagger
     end
 
     def add_tag(name)
-      owner_matched_tag = owner_has_tag?(name)
-      if owner_matched_tag
-        contact_matched_tag = contact_has_tag?(name)
-        if !contact_matched_tag
-          associate_tag_with_contact(owner_matched_tag, @managed_contact)
+      tagger_tag = tagger_has_tag?(name)
+      if tagger_tag
+        taggable_tag = taggable_has_tag?(name)
+        if !taggable_tag
+          associate_tag_with_taggable(tagger_tag, @taggable)
         end
       else
-        cm_contact_tag = create_tag_for_tagger(name, @managed_owner)
-        associate_tag_with_contact(cm_contact_tag, @managed_contact)
+        tagger_tag = create_tag_for_tagger(name, @tagger)
+        associate_tag_with_taggable(tagger_tag, @taggable)
       end
     end
 
     def remove_tag(name)
-      owner_matched_tag = owner_has_tag?(name)
-      if owner_matched_tag && contact_has_tag?(name)
-        disassociate_tag_from_contact(owner_matched_tag, @managed_contact)
+      tagger_tag = tagger_has_tag?(name)
+      if tagger_tag && taggable_has_tag?(name)
+        disassociate_tag_from_taggable(tagger_tag, @taggable)
       end
     end
 
-    def owners_tags
-      @managed_owner.tagalong_tags.order('tagalong_tags.number_of_references DESC').map { |r| r.name }
+    def tagger_tags
+      @tagger.tagalong_tags.order('tagalong_tags.number_of_references DESC').map { |r| r.name }
     end
 
-    def owner_has_tag?(name)
-      @managed_owner.tagalong_tags.find_by_name(name)
+    def tagger_has_tag?(name)
+      @tagger.tagalong_tags.find_by_name(name)
     end
 
-    def contact_has_tag?(name)
-      @managed_contact.tagalong_tags.find_by_name(name)
+    def taggable_has_tag?(name)
+      @taggable.tagalong_tags.find_by_name(name)
     end
 
     private
@@ -43,26 +43,26 @@ module Tagalong
       return TagalongTag.create!(:tagger_id => tagger.id, :tagger_type => tagger.class.to_s, :name => name)
     end
     
-    def associate_tag_with_contact(cm_contact_tag, contact)
-      TagalongTagging.create!(:taggable_id => contact.id, :taggable_type => contact.class.to_s, :tagalong_tag_id => cm_contact_tag.id)
-      increment_tag_number_of_references(cm_contact_tag)
+    def associate_tag_with_taggable(tag, taggable)
+      TagalongTagging.create!(:taggable_id => taggable.id, :taggable_type => taggable.class.to_s, :tagalong_tag_id => tag.id)
+      increment_tag_number_of_references(tag)
     end
 
-    def disassociate_tag_from_contact(cm_contact_tag, contact)
-      contact_tagging = TagalongTagging.find_by_tagalong_tag_id_and_taggable_id(cm_contact_tag.id, contact.id)
-      TagalongTagging.destroy(contact_tagging.id)
-      contact.reload
-      decrement_tag_number_of_references(cm_contact_tag)
+    def disassociate_tag_from_taggable(tag, taggable)
+      taggable_tagging = TagalongTagging.find_by_tagalong_tag_id_and_taggable_id(tag.id, taggable.id)
+      TagalongTagging.destroy(taggable_tagging.id)
+      taggable.reload
+      decrement_tag_number_of_references(tag)
     end
 
-    def increment_tag_number_of_references(cm_contact_tag)
-      cm_contact_tag.number_of_references = (cm_contact_tag.number_of_references || 0) + 1
-      cm_contact_tag.save!
+    def increment_tag_number_of_references(tag)
+      tag.number_of_references = (tag.number_of_references || 0) + 1
+      tag.save!
     end
 
-    def decrement_tag_number_of_references(cm_contact_tag)
-      cm_contact_tag.number_of_references = cm_contact_tag.number_of_references ? cm_contact_tag.number_of_references - 1 : 0
-      cm_contact_tag.save!
+    def decrement_tag_number_of_references(tag)
+      tag.number_of_references = tag.number_of_references ? tag.number_of_references - 1 : 0
+      tag.save!
     end
   end
 end
