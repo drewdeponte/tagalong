@@ -6,10 +6,9 @@ module Tagalong
     end
 
     def add_tag(name)
-      tagger_tag = tagger_has_tag?(name)
-      if tagger_tag
-        taggable_tag = taggable_has_tag?(name)
-        if !taggable_tag
+      tagger_tag = tagger_used_tag?(name)
+      if (tagger_tag != nil)
+        if !taggable_has_tag?(name)
           associate_tag_with_taggable(tagger_tag, @taggable)
         end
       else
@@ -19,7 +18,7 @@ module Tagalong
     end
 
     def remove_tag(name)
-      tagger_tag = tagger_has_tag?(name)
+      tagger_tag = tagger_used_tag?(name)
       if tagger_tag && taggable_has_tag?(name)
         disassociate_tag_from_taggable(tagger_tag, @taggable)
       end
@@ -29,7 +28,7 @@ module Tagalong
       @tagger.tagalong_tags.order('tagalong_tags.number_of_references DESC').map { |r| r.name }
     end
 
-    def tagger_has_tag?(name)
+    def tagger_used_tag?(name)
       @tagger.tagalong_tags.find_by_name(name)
     end
 

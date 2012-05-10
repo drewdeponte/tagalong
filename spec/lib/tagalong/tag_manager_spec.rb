@@ -13,7 +13,7 @@ describe Tagalong::TagManager do
   describe "#add_tag" do
     context "tagger does NOT already have the tag" do
       before(:each) do
-        @tag_manager.stub(:tagger_has_tag?).and_return(nil)
+        @tag_manager.stub(:tagger_used_tag?).and_return(nil)
       end
 
       it "creates a tag for the tagger" do
@@ -33,7 +33,7 @@ describe Tagalong::TagManager do
     context "tagger already has the tag" do
       before(:each) do
         @tag = stub('tag', :id => 108)
-        @tag_manager.stub(:tagger_has_tag?).and_return(@tag)
+        @tag_manager.stub(:tagger_used_tag?).and_return(@tag)
       end
 
       it "does NOT create a new tag for the tagger" do
@@ -69,30 +69,30 @@ describe Tagalong::TagManager do
   describe "#remove_tag" do
     it "disassociates the tag from the taggable if the tag belongs to tagger" do
       tag = stub('tag')
-      @tag_manager.stub(:tagger_has_tag?).and_return(tag)
+      @tag_manager.stub(:tagger_used_tag?).and_return(tag)
       @tag_manager.stub(:taggable_has_tag?).and_return(tag)
       @tag_manager.should_receive(:disassociate_tag_from_taggable).with(tag, @taggable)
       @tag_manager.remove_tag("foo_tag")
     end
 
     it "should NOT dissassociate the tag from the taggable if it does NOT belong to the tagger" do
-      @tag_manager.stub(:tagger_has_tag?).and_return(stub('tag'))
+      @tag_manager.stub(:tagger_used_tag?).and_return(stub('tag'))
       @tag_manager.stub(:taggable_has_tag?).and_return(nil)
       @tag_manager.should_not_receive(:disassociate_tag_from_taggable)
       @tag_manager.remove_tag("foo_tag")
     end
   end
 
-  describe "#tagger_has_tag?" do
+  describe "#tagger_used_tag?" do
     it "returns the matching TagalongTag if the tagger has the tag" do
       tag = stub('tag')
       @tagger.stub_chain(:tagalong_tags, :find_by_name).and_return(tag)
-      @tag_manager.tagger_has_tag?("foo_tag").should == tag
+      @tag_manager.tagger_used_tag?("foo_tag").should == tag
     end
 
     it "returns nil if the tagger does NOT have the tag" do
       @tagger.stub_chain(:tagalong_tags, :find_by_name).and_return(nil)
-      @tag_manager.tagger_has_tag?("foo_tag").should be_nil
+      @tag_manager.tagger_used_tag?("foo_tag").should be_nil
     end
   end
 
