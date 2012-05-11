@@ -24,10 +24,6 @@ module Tagalong
       end
     end
 
-    def tagger_tags
-      @tagger.tagalong_tags.order('tagalong_tags.number_of_references DESC').map { |r| r.name }
-    end
-
     def tagger_used_tag?(name)
       @tagger.tagalong_tags.find_by_name(name)
     end

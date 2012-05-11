@@ -45,7 +45,7 @@ To untag things you must use the Tagger object and hand it a Taggable object wit
 
     @user.untag(@contact, "sometag")
 
-### List tags (needs to be finished)
+### List tags
 
 You can get the list of tags for either a Tagger or a Taggable.
 
@@ -59,7 +59,9 @@ When you get the tags from a Taggable you are getting a list of all the tags tha
     @contact.tags
     # => ['some_tag', 'woot_tag']
 
-### List tags with usage info about a taggable (needs to be finished)
+Tags are returned ordered by how often the tags are used.
+
+### List tags with usage info about a taggable
 
 Passing a taggable object to the tags method on the Tagger will return a list of hash objects containing the tag (`tag`), a boolean representing if the tag is applied to the passed taggable (`used`), and the number of applications of that tag by the Tagger (`number_of_references`).
 

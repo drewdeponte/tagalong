@@ -26,7 +26,36 @@ describe "Tagger" do
     end
 
     describe "#tags" do
-      it "returns list of tags the tagger has used"
+      context "without a taggable" do
+        it "returns list of tags the tagger has used" do
+          @user.tagalong_tags.create!(:name => "foo")
+          @user.tagalong_tags.create!(:name => "bar")
+          @user.tagalong_tags.create!(:name => "car")
+          @user.tags.should == ["foo", "bar", "car"]
+        end
+
+        it "returns the list of tags in descending order of number of references" do
+          @user.tagalong_tags.create!(:name => "foo", :number_of_references => 20)
+          @user.tagalong_tags.create!(:name => "bar", :number_of_references => 100)
+          @user.tagalong_tags.create!(:name => "car", :number_of_references => 8)
+          @user.tags.should == ["bar", "foo", "car"]
+        end
+      end
+
+      context "with a taggable" do
+        it "returns a hash of the tags with usage information about the passed taggable" do
+          tag = @user.tagalong_tags.create!(:name => "foo", :number_of_references => 1)
+          @contact.tagalong_taggings.create!(:tagalong_tag_id => tag.id)
+          @user.tagalong_tags.create!(:name => "bar", :number_of_references => 0)
+          tag = @user.tagalong_tags.create!(:name => "car", :number_of_references => 1)
+          @contact.tagalong_taggings.create!(:tagalong_tag_id => tag.id)
+          @user.tags(@contact).should == [
+            { :tag => "foo", :used => true, :number_of_references => 1  },
+            { :tag => "car", :used => true, :number_of_references => 1 },
+            { :tag => "bar", :used => false, :number_of_references => 0 }
+          ]
+        end
+      end
     end
   end
 

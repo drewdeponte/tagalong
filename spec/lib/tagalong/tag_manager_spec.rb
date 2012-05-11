@@ -1,7 +1,7 @@
-require_relative "../../../lib/tagalong/tag_manager"
+require 'spec_helper'
 
-class TagalongTag; end
-class TagalongTagging; end
+# class TagalongTag; end
+# class TagalongTagging; end
 
 describe Tagalong::TagManager do
   before(:each) do
@@ -111,7 +111,7 @@ describe Tagalong::TagManager do
 
   describe "#create_tag_for_tagger" do
     it "creates a TagalongTag record with the given name, associated with the tagger object" do
-      TagalongTag.should_receive(:create!).with({ :tagger_id => @tagger.id, :tagger_type => "User", :name => "hoopty" })
+      Tagalong::TagalongTag.should_receive(:create!).with({ :tagger_id => @tagger.id, :tagger_type => "User", :name => "hoopty" })
       @tag_manager.send(:create_tag_for_tagger, "hoopty", @tagger)
     end
   end
@@ -120,13 +120,13 @@ describe Tagalong::TagManager do
     it "creates a TagalongTagging record associated with the given taggable and tag" do
       tag = stub('tag', :id => 214)
       @tag_manager.stub(:increment_tag_number_of_references)
-      TagalongTagging.should_receive(:create!).with({ :taggable_id => @taggable.id, :taggable_type => "Contact", :tagalong_tag_id => 214 })
+      Tagalong::TagalongTagging.should_receive(:create!).with({ :taggable_id => @taggable.id, :taggable_type => "Contact", :tagalong_tag_id => 214 })
       @tag_manager.send(:associate_tag_with_taggable, tag, @taggable)
     end
 
     it "increments the reference count for the tag" do
       tag = stub('tag', :id => stub)
-      TagalongTagging.stub(:create!)
+      Tagalong::TagalongTagging.stub(:create!)
       @tag_manager.should_receive(:increment_tag_number_of_references).with(tag)
       @tag_manager.send(:associate_tag_with_taggable, tag, @taggable)
     end
@@ -136,17 +136,17 @@ describe Tagalong::TagManager do
     it "destroys the TagalongTagging record that associates the given tag with the given taggable" do
       tag = stub('tag', :id => 111)
       tagging = mock('tagging', :id => 283)
-      TagalongTagging.stub(:find_by_tagalong_tag_id_and_taggable_id).with(111, @taggable.id).and_return(tagging)
+      Tagalong::TagalongTagging.stub(:find_by_tagalong_tag_id_and_taggable_id).with(111, @taggable.id).and_return(tagging)
       @tag_manager.stub(:decrement_tag_number_of_references)
-      TagalongTagging.should_receive(:destroy).with(283)
+      Tagalong::TagalongTagging.should_receive(:destroy).with(283)
       @tag_manager.send(:disassociate_tag_from_taggable, tag, @taggable)
     end
 
     it "decrements the reference count of the tag" do
       tag = stub('tag', :id => 111)
       tagging = stub('tagging', :id => 283)
-      TagalongTagging.stub(:find_by_tagalong_tag_id_and_taggable_id).and_return(tagging)
-      TagalongTagging.stub(:destroy)
+      Tagalong::TagalongTagging.stub(:find_by_tagalong_tag_id_and_taggable_id).and_return(tagging)
+      Tagalong::TagalongTagging.stub(:destroy)
       @tag_manager.should_receive(:decrement_tag_number_of_references).with(tag)
       @tag_manager.send(:disassociate_tag_from_taggable, tag, @taggable)
     end

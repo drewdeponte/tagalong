@@ -15,7 +15,12 @@ module Tagalong
     end
 
     module InstanceMethods
+      def has_tag?(name)
+        return self.tagalong_tags.map { |r| r.name }.include?(name)
+      end
+
       def tags
+        return self.tagalong_tags.map { |r| r.name }
       end
     end
   end
