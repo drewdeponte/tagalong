@@ -91,6 +91,10 @@ You can aquire an array of taggable objects that have a given tag using the `tag
     @user.taggables_with('some_tag')
     # => [Taggable Object, Taggable Object] (in this case Taggable Objects would be Contacts)
 
+## Credits
+
+I just wanted to thank all of the other open source Rails tagging plugins out there. Especially, acts-as-taggable-on, I learned a lot from you all. Thanks!
+
 ## Contributing
 
 If you are interested in contributing code please follow the process below and please include tests. Also, please fill out issues if you have discovered a bug or simply want to request a feature on our GitHub issues page.
