@@ -1,6 +1,6 @@
 # Tagalong
 
-Tagalong is a Rails plugin that is intended to be a clean, efficient, and simple. I have tried very hard to have the API make sense in terms of OOP as I have seen many other tagging libraries that I don't think do a great job of this.
+Tagalong is a Rails plugin that is intended to be clean, efficient, and simple. I have tried very hard to have the API make sense in terms of OOP as I have seen many other tagging libraries that I don't think do a great job of this.
 
 The other key differentiation between Tagalong and many of the other tagging libraries out there is the relational database structure behind the scenes. This allows us to differentiate this tagging plugin in the following ways:
 
@@ -86,7 +86,7 @@ Passing a taggable object to the tags method on the Tagger will return a list of
 
 ### List taggables that have a tag
 
-You can aquire an array of taggable objects that have a given tag using the `taggables_with` method on the Tagger object as follows:
+You can acquire an array of taggable objects that have a given tag using the `taggables_with` method on the Tagger object as follows:
 
     @user.taggables_with('some_tag')
     # => [Taggable Object, Taggable Object] (in this case Taggable Objects would be Contacts)
