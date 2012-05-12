@@ -5,5 +5,9 @@ module Tagalong
 
     validates_presence_of :name
     validates_uniqueness_of :name, :scope => [ :tagger_id, :tagger_type ]
+
+    def taggables
+      tagalong_taggings.map { |tagging| tagging.taggable }
+    end
   end
 end

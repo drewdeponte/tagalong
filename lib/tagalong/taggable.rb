@@ -20,7 +20,7 @@ module Tagalong
       end
 
       def tags
-        return self.tagalong_tags.map { |r| r.name }
+        return self.tagalong_tags.order("number_of_references DESC").map { |r| r.name }
       end
     end
   end

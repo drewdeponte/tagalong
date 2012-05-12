@@ -46,7 +46,7 @@ module Tagalong
     def disassociate_tag_from_taggable(tag, taggable)
       taggable_tagging = TagalongTagging.find_by_tagalong_tag_id_and_taggable_id(tag.id, taggable.id)
       TagalongTagging.destroy(taggable_tagging.id)
-      taggable.reload
+      taggable.tagalong_tags(true)
       decrement_tag_number_of_references(tag)
     end
 

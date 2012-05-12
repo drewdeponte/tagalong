@@ -11,6 +11,7 @@ class TagalongMigration < ActiveRecord::Migration
 
     add_index :tagalong_tags, :tagger_id
     add_index :tagalong_tags, :tagger_type
+    add_index :tagalong_tags, [:tagger_id, :tagger_type]
 
     create_table :tagalong_taggings do |t|
       t.integer :tagalong_tag_id
@@ -23,6 +24,7 @@ class TagalongMigration < ActiveRecord::Migration
     add_index :tagalong_taggings, :tagalong_tag_id
     add_index :tagalong_taggings, :taggable_id
     add_index :tagalong_taggings, :taggable_type
+    add_index :tagalong_taggings, [:taggable_id, :taggable_type]
   end
 
   def self.down

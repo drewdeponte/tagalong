@@ -29,6 +29,13 @@ describe "Taggable" do
         @contact.tagalong_tags.create!(:name => "car")
         @contact.tags.should == ["foo", "bar", "car"]
       end
+
+      it "returns list of tags currently applied in descending order of references" do
+        @contact.tagalong_tags.create!(:name => "hoopty", :number_of_references => 5)
+        @contact.tagalong_tags.create!(:name => "doopty", :number_of_references => 99)
+        @contact.tagalong_tags.create!(:name => "toopty", :number_of_references => 4)
+        @contact.tags.should == ["doopty", "hoopty", "toopty"]
+      end
     end
   end
 

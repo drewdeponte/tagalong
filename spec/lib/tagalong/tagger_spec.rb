@@ -57,6 +57,17 @@ describe "Tagger" do
         end
       end
     end
+
+    describe "#taggables_with" do
+      it "returns a collection of the taggables tagged with the given tag" do
+        @user.tag(@contact, "jackson")
+        @user.taggables_with("jackson").should == [@contact]
+      end
+
+      it "returns an empty array if it has no matching taggables" do
+        @user.taggables_with("jackson_five").should == []
+      end
+    end
   end
 
   describe "Isolation" do
@@ -73,6 +84,11 @@ describe "Tagger" do
         tag_manager.should_receive(:add_tag).with("foo")
         @user.tag(@contact, "foo")
       end
+
+      it "raises taggable not persisted exception if attempting to tag a non-persisted taggable" do
+        new_contact = Contact.new
+        lambda { @user.tag(new_contact, "bar") }.should raise_error(Tagalong::TaggableNotPersisted)
+      end
     end
 
     describe "#untag" do
@@ -87,6 +103,11 @@ describe "Tagger" do
         Tagalong::TagManager.stub(:new).with(@contact, @user).and_return(tag_manager)
         tag_manager.should_receive(:remove_tag).with("bar")
         @user.untag(@contact, "bar")
+      end
+
+      it "raises taggable not persisted exception if attempting to untag a non-persisted taggable" do
+        new_contact = Contact.new
+        lambda { @user.untag(new_contact, "bar") }.should raise_error(Tagalong::TaggableNotPersisted)
       end
     end
   end

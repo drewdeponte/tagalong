@@ -1,6 +1,14 @@
 # Tagalong
 
-TODO: Write a gem description
+Tagalong is a Rails plugin that is intended to be a clean, efficient, and simple. I have tried very hard to have the API make sense in terms of OOP as I have seen many other tagging libraries that I don't think do a great job of this.
+
+The other key differentiation between Tagalong and many of the other tagging libraries out there is the relational database structure behind the scenes. This allows us to differentiate this tagging plugin in the following ways:
+
+* clean object oriented API
+* does NOT require saving of the model being tagged
+* keeps history of tags Taggers have used
+* allows defining multiple Taggers and Taggables
+* tracks number of times tags are used
 
 ## Installation
 
@@ -18,7 +26,15 @@ Or install it yourself as:
 
 ## Usage
 
-### The setup
+### Migration Setup
+
+In order to use `tagalong` you have to generate the proper migrations so that the tags can be stored in the database. You can do this with the following command:
+
+    rails generate tagalong:migration
+
+The above will generate the migration and place it appropriately in the db/migrate/ project path so that the next time you `rake db:migrate` it will make the changes to the database.
+
+### Declaring Taggers and Taggables
 
 In order to use `tagalong` you need to first declare at least one Tagger and at least one Taggable. You do this as follows:
 
@@ -30,18 +46,15 @@ In order to use `tagalong` you need to first declare at least one Tagger and at 
       tagalong_tagger
     end
 
-    @user = User.new
-    @contact = Contact.new
-
 ### Tag things
 
-To tag things you must use the Tagger object and hand it a Taggable object with the given tag that you want to apply as follows:
+To tag things you must use the Tagger object and hand it a persisted Taggable object with the given tag that you want to apply as follows:
 
     @user.tag(@contact, "sometag")
 
 ### Untag things
 
-To untag things you must use the Tagger object and hand it a Taggable object with the given tag that you want to untag as follows:
+To untag things you must use the Tagger object and hand it a persisted Taggable object with the given tag that you want to untag as follows:
 
     @user.untag(@contact, "sometag")
 
@@ -61,7 +74,7 @@ When you get the tags from a Taggable you are getting a list of all the tags tha
 
 Tags are returned ordered by how often the tags are used.
 
-### List tags with usage info about a taggable
+### List tags with usage info
 
 Passing a taggable object to the tags method on the Tagger will return a list of hash objects containing the tag (`tag`), a boolean representing if the tag is applied to the passed taggable (`used`), and the number of applications of that tag by the Tagger (`number_of_references`).
 
@@ -71,8 +84,16 @@ Passing a taggable object to the tags method on the Tagger will return a list of
            { tag: 'another_tag', :used => false, :number_of_references => 42 }
          ]
 
+### List taggables that have a tag
+
+You can aquire an array of taggable objects that have a given tag using the `taggables_with` method on the Tagger object as follows:
+
+    @user.taggables_with('some_tag')
+    # => [Taggable Object, Taggable Object] (in this case Taggable Objects would be Contacts)
 
 ## Contributing
+
+If you are interested in contributing code please follow the process below and please include tests. Also, please fill out issues if you have discovered a bug or simply want to request a feature on our GitHub issues page.
 
 1. Fork it
 2. Create your feature branch (`git checkout -b my-new-feature`)

@@ -136,6 +136,7 @@ describe Tagalong::TagManager do
     it "destroys the TagalongTagging record that associates the given tag with the given taggable" do
       tag = stub('tag', :id => 111)
       tagging = mock('tagging', :id => 283)
+      @taggable.stub(:tagalong_tags)
       Tagalong::TagalongTagging.stub(:find_by_tagalong_tag_id_and_taggable_id).with(111, @taggable.id).and_return(tagging)
       @tag_manager.stub(:decrement_tag_number_of_references)
       Tagalong::TagalongTagging.should_receive(:destroy).with(283)
@@ -145,6 +146,7 @@ describe Tagalong::TagManager do
     it "decrements the reference count of the tag" do
       tag = stub('tag', :id => 111)
       tagging = stub('tagging', :id => 283)
+      @taggable.stub(:tagalong_tags)
       Tagalong::TagalongTagging.stub(:find_by_tagalong_tag_id_and_taggable_id).and_return(tagging)
       Tagalong::TagalongTagging.stub(:destroy)
       @tag_manager.should_receive(:decrement_tag_number_of_references).with(tag)

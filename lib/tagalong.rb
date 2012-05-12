@@ -1,6 +1,7 @@
 require "active_record"
 
 require "tagalong/version"
+require "tagalong/exceptions"
 require "tagalong/tagalong_tag"
 require "tagalong/tagalong_tagging"
 require "tagalong/tag_manager"
