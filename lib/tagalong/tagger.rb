@@ -30,7 +30,10 @@ module Tagalong
         if taggable == nil
           return self.tagalong_tags(true).order("number_of_references DESC").map { |r| r.name }
         else
-          return self.tagalong_tags(true).joins("LEFT OUTER JOIN tagalong_taggings ON tagalong_taggings.tagalong_tag_id = tagalong_tags.id").select("tagalong_tags.id, tagalong_tags.name, tagalong_tags.number_of_references, tagalong_taggings.id as used").order("number_of_references DESC").map { |r| { :tag => r.name, :used => !r.used.nil?, :number_of_references => r.number_of_references } }
+          return self.tagalong_tags(true).
+                  joins("LEFT OUTER JOIN tagalong_taggings ON tagalong_taggings.tagalong_tag_id = tagalong_tags.id AND tagalong_taggings.taggable_id = '#{taggable.id.to_s}'").
+                  select("tagalong_tags.id, tagalong_tags.name, tagalong_tags.number_of_references, tagalong_taggings.id as used").
+                  order("number_of_references DESC").map { |r| { :tag => r.name, :used => !r.used.nil?, :number_of_references => r.number_of_references } }
         end
       end
 

@@ -55,6 +55,31 @@ describe "Tagger" do
             { :tag => "bar", :used => false, :number_of_references => 0 }
           ]
         end
+
+        it "returns a hash of tags with usage information about the passed taggable on secondary calls when the taggable changes" do
+          tag = @user.tagalong_tags.create!(:name => "foo", :number_of_references => 1)
+          @contact.tagalong_taggings.create!(:tagalong_tag_id => tag.id)
+          @user.tagalong_tags.create!(:name => "bar", :number_of_references => 0)
+          tag = @user.tagalong_tags.create!(:name => "car", :number_of_references => 1)
+          @contact.tagalong_taggings.create!(:tagalong_tag_id => tag.id)
+          @user.tags(@contact).should == [
+            { :tag => "foo", :used => true, :number_of_references => 1  },
+            { :tag => "car", :used => true, :number_of_references => 1 },
+            { :tag => "bar", :used => false, :number_of_references => 0 }
+          ]
+          @other_contact = Contact.create!(:name => "My Other Taggable")
+          tag = @user.tagalong_tags.create!(:name => "jones", :number_of_references => 1)
+          @other_contact.tagalong_taggings.create!(:tagalong_tag_id => tag.id)
+          tag = @user.tagalong_tags.create!(:name => "jimmy", :number_of_references => 2)
+          @other_contact.tagalong_taggings.create!(:tagalong_tag_id => tag.id)
+          @user.tags(@other_contact).should == [
+            { :tag => "jimmy", :used => true, :number_of_references => 2  },
+            { :tag => "foo", :used => false, :number_of_references => 1  },
+            { :tag => "car", :used => false, :number_of_references => 1 },
+            { :tag => "jones", :used => true, :number_of_references => 1 },
+            { :tag => "bar", :used => false, :number_of_references => 0 }
+          ]
+        end
       end
     end
 
