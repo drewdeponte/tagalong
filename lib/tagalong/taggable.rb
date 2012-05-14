@@ -16,11 +16,11 @@ module Tagalong
 
     module InstanceMethods
       def has_tag?(name)
-        return self.tagalong_tags(true).map { |r| r.name }.include?(name)
+        return self.tagalong_tags.map { |r| r.name }.include?(name)
       end
 
       def tags
-        return self.tagalong_tags(true).order("number_of_references DESC").map { |r| r.name }
+        return self.tagalong_tags.order("number_of_references DESC").map { |r| r.name }
       end
     end
   end
