@@ -31,14 +31,14 @@ describe "Tagger" do
           @user.tagalong_tags.create!(:name => "foo")
           @user.tagalong_tags.create!(:name => "bar")
           @user.tagalong_tags.create!(:name => "car")
-          @user.tags.should == ["foo", "bar", "car"]
+          @user.tags.should == ["bar", "car", "foo"]
         end
 
-        it "returns the list of tags in descending order of number of references" do
+        it "returns the list of tags in ascending alphabetical order" do
           @user.tagalong_tags.create!(:name => "foo", :number_of_references => 20)
           @user.tagalong_tags.create!(:name => "bar", :number_of_references => 100)
           @user.tagalong_tags.create!(:name => "car", :number_of_references => 8)
-          @user.tags.should == ["bar", "foo", "car"]
+          @user.tags.should == ["bar", "car", "foo"]
         end
       end
 
@@ -50,9 +50,9 @@ describe "Tagger" do
           tag = @user.tagalong_tags.create!(:name => "car", :number_of_references => 1)
           @contact.tagalong_taggings.create!(:tagalong_tag_id => tag.id)
           @user.tags(@contact).should == [
-            { :tag => "foo", :used => true, :number_of_references => 1  },
+            { :tag => "bar", :used => false, :number_of_references => 0 },
             { :tag => "car", :used => true, :number_of_references => 1 },
-            { :tag => "bar", :used => false, :number_of_references => 0 }
+            { :tag => "foo", :used => true, :number_of_references => 1  }
           ]
         end
 
@@ -63,9 +63,9 @@ describe "Tagger" do
           tag = @user.tagalong_tags.create!(:name => "car", :number_of_references => 1)
           @contact.tagalong_taggings.create!(:tagalong_tag_id => tag.id)
           @user.tags(@contact).should == [
-            { :tag => "foo", :used => true, :number_of_references => 1  },
+            { :tag => "bar", :used => false, :number_of_references => 0 },
             { :tag => "car", :used => true, :number_of_references => 1 },
-            { :tag => "bar", :used => false, :number_of_references => 0 }
+            { :tag => "foo", :used => true, :number_of_references => 1  }
           ]
           @other_contact = Contact.create!(:name => "My Other Taggable")
           tag = @user.tagalong_tags.create!(:name => "jones", :number_of_references => 1)
@@ -73,11 +73,11 @@ describe "Tagger" do
           tag = @user.tagalong_tags.create!(:name => "jimmy", :number_of_references => 2)
           @other_contact.tagalong_taggings.create!(:tagalong_tag_id => tag.id)
           @user.tags(@other_contact).should == [
-            { :tag => "jimmy", :used => true, :number_of_references => 2  },
-            { :tag => "foo", :used => false, :number_of_references => 1  },
+            { :tag => "bar", :used => false, :number_of_references => 0 },
             { :tag => "car", :used => false, :number_of_references => 1 },
-            { :tag => "jones", :used => true, :number_of_references => 1 },
-            { :tag => "bar", :used => false, :number_of_references => 0 }
+            { :tag => "foo", :used => false, :number_of_references => 1  },
+            { :tag => "jimmy", :used => true, :number_of_references => 2  },
+            { :tag => "jones", :used => true, :number_of_references => 1 }
           ]
         end
       end

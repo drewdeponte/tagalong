@@ -10,15 +10,15 @@ describe "Taggable" do
   end
 
   describe "Integration" do
-    describe "#has_tag?" do
+    describe "#tagged_with?" do
       it "returns true if the taggable has the given tag" do
         tag = @user.tagalong_tags.create!(:name => "foo")
         @contact.tagalong_taggings.create!(:tagalong_tag_id => tag.id)
-        @contact.has_tag?("foo").should be_true
+        @contact.tagged_with?("foo").should be_true
       end
       
       it "returns false if the taggable does NOT have the given tag" do
-        @contact.has_tag?("bar").should be_false
+        @contact.tagged_with?("bar").should be_false
       end
     end
 
@@ -27,7 +27,7 @@ describe "Taggable" do
         @contact.tagalong_tags.create!(:name => "foo")
         @contact.tagalong_tags.create!(:name => "bar")
         @contact.tagalong_tags.create!(:name => "car")
-        @contact.tags.should == ["foo", "bar", "car"]
+        @contact.tags.should == ["bar", "car", "foo"]
       end
 
       it "returns list of tags currently applied in descending order of references" do

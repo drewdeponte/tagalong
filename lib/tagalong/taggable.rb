@@ -15,12 +15,12 @@ module Tagalong
     end
 
     module InstanceMethods
-      def has_tag?(name)
+      def tagged_with?(name)
         return self.tagalong_tags.map { |r| r.name }.include?(name)
       end
 
       def tags
-        return self.tagalong_tags.order("number_of_references DESC").map { |r| r.name }
+        return self.tagalong_tags.order("name ASC").map { |r| r.name }
       end
     end
   end
