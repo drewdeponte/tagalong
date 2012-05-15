@@ -4,6 +4,6 @@ module Tagalong
     belongs_to :taggable, :polymorphic => true
 
     validates_presence_of :tagalong_tag_id
-    validates_presence_of :tagalong_tag_id, :scope => [ :taggable_type, :taggable_id ]
+    validates_uniqueness_of :tagalong_tag_id, :scope => [ :taggable_type, :taggable_id ]
   end
 end
