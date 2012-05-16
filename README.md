@@ -25,7 +25,7 @@ And then execute:
 
     $ bundle
 
-Or install it yourself as:
+Or manually install it:
 
     $ gem install tagalong
 
@@ -33,15 +33,15 @@ Or install it yourself as:
 
 ### Migration Setup
 
-In order to use [Tagalong](http://github.com/cyphactor/tagalong) you have to generate the proper migrations so that the tags can be stored in the database. You can do this with the following command:
+In order to use [Tagalong](http://github.com/cyphactor/tagalong) generate the proper migrations so that the tags can be stored in the database. This can be done with the following command:
 
     rails generate tagalong:migration
 
-The above will generate the migration and place it appropriately in the db/migrate/ project path so that the next time you `rake db:migrate` it will make the changes to the database.
+The above will generate the migration and place it appropriately in the `db/migrate/` project path.
 
 ### Declaring Taggers and Taggables
 
-In addition to generating and running the migrations, you also need to declare at least one Tagger and at least one Taggable. This is done as follows:
+It is necessary to declare at least one Tagger and Taggable in addition to generating and running the migrations. This is done as follows:
 
     class Contact < ActiveRecord::Base
       tagalong_taggable
@@ -51,37 +51,30 @@ In addition to generating and running the migrations, you also need to declare a
       tagalong_tagger
     end
 
-Once you have declared at least one Tagger and Taggable, they can be used in numerous ways as outlined below.
+Once Taggers and Taggables are declared, they can be used in numerous ways as outlined below.
 
 ### Tagging
 
-To tag you must call the `tag` method on a Tagger object and hand it a persisted Taggable object with the given label that you want to apply.
+To tag, call the `tag` method on a Tagger object and hand it a persisted Taggable object with the given label that you want to apply.
 
     @user.tag(@contact, "sometag")
 
 ### Untagging
 
-To untag you must call the `untag` method on a Tagger object and hand it a persisted Taggable object with the given label that you want to untag.
+To untag, call the `untag` method on a Tagger object and hand it a persisted Taggable object with the given label that you want to untag.
 
     @user.untag(@contact, "sometag")
 
-### List tags
+### List Tagger tags
 
-You can get the list of tags for either a Tagger or a Taggable.
-
-When you get the tags from a Tagger you are getting a list of all tags that Tagger has ever used in ascending alphabetical order.
+To list Tagger tags, call the `tags` method on a Tagger object. This will return an array of all tags that Tagger has ever used in ascending alphabetical order.
 
     @user.tags
     # => ['another_tag', 'some_tag', 'woot_tag']
 
-When you get the tags from a Taggable you are getting a list of all the tags that Taggable is currently tagged with in ascending alphabetical order.
+### List Tagger tags with usage info
 
-    @contact.tags
-    # => ['some_tag', 'woot_tag']
-
-### List tags with usage info
-
-Passing a Taggable object to the tags method on the Tagger will return a list of hash objects containing the tag ( **:tag** ), a boolean representing if the taggable is currently tagged with that tag ( **:used** ), and the number of references of that tag by the Tagger ( **:number_of_references** ). The resulting list of hashes is ordered by tag in ascending alphabetical order.
+To list Tagger tags with usage info, call the `tags` method on a Tagger object passing in a Taggable object. This will return a list of hash objects containing the tag ( **:tag** ), a boolean representing if the Taggable passed in is currently tagged with that tag ( **:used** ), and the number of references of that tag by the Tagger ( **:number_of_references** ). The resulting list of hashes is ordered by tag in ascending alphabetical order.
 
     @user.tags(@contact)
     # => [
@@ -90,21 +83,26 @@ Passing a Taggable object to the tags method on the Tagger will return a list of
            { tag: 'woot_tag', :used => true, :number_of_references => 2 }
          ]
 
-### List taggables that have a tag
+### List Taggable tags
 
-You can acquire an array of Taggable objects that are tagged with a given tag using the `taggables_with` method on the Tagger object as follows:
+To list Taggable tags, call the `tags` method on a Taggable object. This will return an array of all tags that Taggable is currently tagged with in ascending order.
+
+    @contact.tags
+    # => ['some_tag', 'woot_tag']
+
+### List Taggables that have a tag
+
+To list Taggabels that have a tag, call the `taggables_with` method on a Tagger object as follows. This will return an array of Taggable objects that are currently tagged with the given tag.
 
     @user.taggables_with('some_tag')
     # => [Contact Object, Contact Object]
 
 ### Check if Taggable is tagged with a tag
 
-You can determine if a Taggable is tagged with a given tag by using the `tagged_with?` method on the Taggable object as follows:
+To check if a Taggable is tagged with a tag, call the `tagged_with?` method on a Taggable object as follows. This will return `true` in the case that the Taggable IS currently tagged with the given tag, and `false` in the case where the Taggable is NOT currently tagged with the given tag.
 
     @contact.tagged_with?('some_tag')
     # => true
-
-The `tagged_with?` method returns `true` in the case that the Taggable is currently tagged with the given tag, and `false` in the case where the Taggable is NOT currently tagged with the given tag.
 
 ## Credits
 
