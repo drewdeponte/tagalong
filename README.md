@@ -29,6 +29,22 @@ Or manually install it:
 
     $ gem install tagalong
 
+## API Concepts
+
+There are three major concepts that one should understand before reading the documentation for the API, the Tag, Tagger, and Taggable.
+
+### Tag
+
+A Tag in the [Tagalong](http://github.com/cyphactor/tagalong) API is represented by a string. Conceptually it is simply a textual label that is associated with a Taggable and a Tagger.
+
+### Tagger
+
+A Tagger is an object that will be performing the action of applying a tag to a Taggable. In most Rails apps this is the a User object.
+
+### Taggable
+
+A Taggable is an object that will be having the tags applied to it. In a Rails app this could be a Task object, Contact object, or any type of object that you want to be able to tag.
+
 ## Usage
 
 ### Migration Setup
