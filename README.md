@@ -1,5 +1,7 @@
 # Tagalong
 
+[![Build Status](https://secure.travis-ci.org/cyphactor/tagalong.png?branch=master)](http://travis-ci.org/cyphactor/tagalong)
+
 Tagalong is a Rails plugin that is intended to be clean, efficient, and simple. I have tried very hard to have the API make sense in terms of OOP as I have seen many other tagging libraries that I don't think do a great job of this.
 
 The other key differentiation between Tagalong and many of the other tagging libraries out there is the relational database structure behind the scenes. This allows us to differentiate this tagging plugin in the following ways:
