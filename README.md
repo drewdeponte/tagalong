@@ -108,7 +108,7 @@ The `tagged_with?` method returns `true` in the case that the Taggable is curren
 
 ## Credits
 
-I just wanted to thank all of the other open source Rails tagging plugins out there. Especially, acts-as-taggable-on, I learned a lot from you all. Thanks!
+I just wanted to thank all of the other open source Rails tagging plugins out there. Especially, [acts-as-taggable-on](http://github.com/mbleigh/acts-as-taggable-on), [is_taggable](http://github.com/jamesgolick/is_taggable), and [rocket_tag](http://github.com/bradphelan/rocket_tag). I learned a lot from you all. Thanks!
 
 I also want to thank [RealPractice, Inc.](http://realpractice.com) for donating some developer hours to the project as well as being our initial user.
 
@@ -116,7 +116,7 @@ Beyond that I want to specifically thank [@cyoungberg](http://github.com/cyoungb
 
 ## Contributing
 
-If you are interested in contributing code please follow the process below and please include tests. Also, please fill out issues if you have discovered a bug or simply want to request a feature on our GitHub [issues](http://github.com/cyphactor/tagalong/issues) page.
+If you are interested in contributing code please follow the process below and include tests. Also, please fill out issues on our GitHub [issues](http://github.com/cyphactor/tagalong/issues) page if you have discovered a bug or simply want to request a feature.
 
 1. Fork it
 2. Create your feature branch (`git checkout -b my-new-feature`)
