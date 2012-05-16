@@ -33,7 +33,7 @@ Or manually install it:
 
 ### Migration Setup
 
-In order to use [Tagalong](http://github.com/cyphactor/tagalong) generate the proper migrations so that the tags can be stored in the database. This can be done with the following command:
+In order to use [Tagalong](http://github.com/cyphactor/tagalong), generate the proper migrations so that the tags can be stored in the database. This can be done with the following command:
 
     rails generate tagalong:migration
 
