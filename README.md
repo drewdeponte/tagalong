@@ -92,7 +92,7 @@ Passing a Taggable object to the tags method on the Tagger will return a list of
 
 ### List taggables that have a tag
 
-You can acquire an array of taggable objects that tagged with a given tag using the `taggables_with` method on the Tagger object as follows:
+You can acquire an array of taggable objects that are tagged with a given tag using the `taggables_with` method on the Tagger object as follows:
 
     @user.taggables_with('some_tag')
     # => [Contact Object, Contact Object]
