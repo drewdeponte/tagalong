@@ -55,13 +55,13 @@ Once you have declared at least one Tagger and Taggable, they can be used in num
 
 ### Tagging
 
-To tag you must call the `tag` method on a Tagger object and hand it a persisted Taggable object with the given tag that you want to apply.
+To tag you must call the `tag` method on a Tagger object and hand it a persisted Taggable object with the given label that you want to apply.
 
     @user.tag(@contact, "sometag")
 
 ### Untagging
 
-To untag you must call the `untag` method on a Tagger object and hand it a persisted Taggable object with the given tag that you want to untag.
+To untag you must call the `untag` method on a Tagger object and hand it a persisted Taggable object with the given label that you want to untag.
 
     @user.untag(@contact, "sometag")
 
