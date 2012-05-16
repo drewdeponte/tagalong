@@ -51,7 +51,7 @@ In addition to generating and running the migrations, you also need to declare a
       tagalong_tagger
     end
 
-Once you have declared at least one Tagger and at least one Taggable you can use them in your app in the numerous ways as outlined below.
+Once you have declared at least one Tagger and Taggable, they can be used in numerous ways as outlined below.
 
 ### Tagging
 
