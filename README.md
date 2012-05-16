@@ -85,14 +85,14 @@ To list Tagger tags with usage info, call the `tags` method on a Tagger object p
 
 ### List Taggable tags
 
-To list Taggable tags, call the `tags` method on a Taggable object. This will return an array of all tags that Taggable is currently tagged with in ascending order.
+To list Taggable tags, call the `tags` method on a Taggable object. This will return an array of all tags that Taggable is currently tagged with in ascending alphabetical order.
 
     @contact.tags
     # => ['some_tag', 'woot_tag']
 
 ### List Taggables that have a tag
 
-To list Taggabels that have a tag, call the `taggables_with` method on a Tagger object as follows. This will return an array of Taggable objects that are currently tagged with the given tag.
+To list Taggables that have a tag, call the `taggables_with` method on a Tagger object as follows. This will return an array of Taggable objects that are currently tagged with the given tag.
 
     @user.taggables_with('some_tag')
     # => [Contact Object, Contact Object]
@@ -106,7 +106,7 @@ To check if a Taggable is tagged with a tag, call the `tagged_with?` method on a
 
 ## Credits
 
-I just wanted to thank all of the other open source Rails tagging plugins out there. Especially, [acts-as-taggable-on](http://github.com/mbleigh/acts-as-taggable-on), [is_taggable](http://github.com/jamesgolick/is_taggable), and [rocket_tag](http://github.com/bradphelan/rocket_tag). I learned a lot from you all. Thanks!
+I just wanted to thank all of the other open source Rails tagging plugins out there. Especially, [acts-as-taggable-on](http://github.com/mbleigh/acts-as-taggable-on), [is_taggable](http://github.com/jamesgolick/is_taggable), and [rocket_tag](http://github.com/bradphelan/rocket_tag). I learned a lot from you all.
 
 I also want to thank [RealPractice, Inc.](http://realpractice.com) for donating some developer hours to the project as well as being our initial user.
 
