@@ -1,4 +1,5 @@
 sqlite3:
   adapter: sqlite3
-  database: tagalong.sqlite3
+  database: ":memory:"
+  timeout: 500
 
