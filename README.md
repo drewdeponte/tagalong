@@ -2,9 +2,9 @@
 
 [![Build Status](https://secure.travis-ci.org/cyphactor/tagalong.png?branch=master)](http://travis-ci.org/cyphactor/tagalong)
 
-[Tagalong](http://github.com/cyphactor/tagalong) is a Rails tagging plugin that is intended to be clean, efficient, and simple. I have tried hard to keep the API slim and intelligable in terms of Object Oriented Programming. I focus heavily on this as I feel most other Rails tagging plugins seriously neglecte OO in their APIs.
+[Tagalong](http://github.com/cyphactor/tagalong) is a Rails tagging plugin that is intended to be clean, efficient, and simple. I have tried hard to keep the API slim and intelligable in terms of Object Oriented Programming. I focused heavily on this as I feel most other Rails tagging plugins seriously neglect OO in their APIs.
 
-The other key differentiation between [Tagalong](http://github.com/cyphactor/tagalong) and other tagging libraries is the relational database structure behind the scenes. This database structure allows us to provide not only an Object Oriented API but also a set of features that help differentiate [Tagalong](http://github.com/cyphactor/tagalong) from other Rails tagging plugins.
+The other key differentiation between [Tagalong](http://github.com/cyphactor/tagalong) and other tagging libraries is the relational database structure behind the scenes. This database structure allows [Tagalong](http://github.com/cyphactor/tagalong) to provide not only an Object Oriented API, but also a set of features that help differentiate it from other Rails tagging plugins.
 
 ## Feature Overview
 
@@ -55,13 +55,13 @@ Once you have declared at least one Tagger and at least one Taggable you can use
 
 ### Tagging
 
-To tag you must use the Tagger object and hand it a persisted Taggable object with the given tag that you want to tag.
+To tag you must call the `tag` method on a Tagger object and hand it a persisted Taggable object with the given tag that you want to apply.
 
     @user.tag(@contact, "sometag")
 
 ### Untagging
 
-To untag you must use the Tagger object and hand it a persisted Taggable object with the given tag that you want to untag.
+To untag you must call the `untag` method on a Tagger object and hand it a persisted Taggable object with the given tag that you want to untag.
 
     @user.untag(@contact, "sometag")
 
