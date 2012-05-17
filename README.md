@@ -81,6 +81,12 @@ To untag, call the `untag` method on a Tagger object and hand it a persisted Tag
 
     @user.untag(@contact, "sometag")
 
+### Deleting
+
+To delete a tag, call the `delete_tag` method on a Tagger object and hand it the label of the tag you want to delete. This will remove the tag from the Tagger, and as well as all Taggables that might be using it.
+
+    @user.delete_tag("sometag")
+
 ### List Tagger tags
 
 To list Tagger tags, call the `tags` method on a Tagger object. This will return an array of all tags that Tagger has ever used in ascending alphabetical order.
