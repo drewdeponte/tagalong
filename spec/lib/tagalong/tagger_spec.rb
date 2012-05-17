@@ -25,6 +25,28 @@ describe "Tagger" do
       end
     end
 
+    describe "#delete_tag" do
+      before(:each) do
+        @user.tag(@contact, "tag1")
+      end
+
+      it "should disassociate the tag that belongs to it" do
+        @user.delete_tag('tag1')
+        @user.tags.should_not include("tag1")
+      end
+
+      it "should destroy the tag record from the db" do
+        @user.delete_tag('tag1')
+        Tagalong::TagalongTag.find_by_name('tag1').should_not be_present
+      end
+
+      it "should not destroy tags it does not have" do
+        Tagalong::TagalongTag.create(:tagger_type => 'FakeTagger', :tagger_id => 1, :name => 'badTag')
+        @user.delete_tag('badTag')
+        Tagalong::TagalongTag.find_by_name('badTag').should be_present
+      end
+    end
+
     describe "#tags" do
       context "without a taggable" do
         it "returns list of tags the tagger has used" do

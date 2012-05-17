@@ -26,6 +26,13 @@ module Tagalong
         tag_manager.remove_tag(tag_name)
       end
 
+      def delete_tag(tag_name)
+        tag = tagalong_tags.find_by_name(tag_name)
+        if tag.present?
+          tag.destroy
+        end
+      end
+
       def tags(taggable = nil)
         if taggable == nil
           return self.tagalong_tags.order("name ASC").map { |r| r.name }
