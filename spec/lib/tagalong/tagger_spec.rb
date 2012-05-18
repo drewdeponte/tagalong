@@ -165,10 +165,8 @@ describe "Tagger" do
 
     describe "#has_tag?" do
       it "should try the list of tags for the tagger" do
-        @user.stub_chain(:tags, :include)
-        tags = stub('tags')
-        tags.stub(:include?)
-        @user.should_receive(:tags).and_return(tags)
+        tags = mock('tags')
+        @user.stub(:tags).and_return(tags)
         tags.should_receive(:include?).with('tag5')
         @user.has_tag?('tag5')
       end
