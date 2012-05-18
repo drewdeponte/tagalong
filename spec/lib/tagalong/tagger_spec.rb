@@ -54,6 +54,20 @@ describe "Tagger" do
       end
     end
 
+    describe "#has_tag?" do
+      context "the tagger has the tag" do
+        before(:each) do
+          @user.create_tag('tag5')
+        end
+
+        it {@user.has_tag?('tag5').should be_true}
+      end
+
+      context "the tagger does not have the tag" do
+        it {@user.has_tag?('tag99').should be_false}
+      end
+    end
+
     describe "#tags" do
       context "without a taggable" do
         it "returns list of tags the tagger has used" do
@@ -146,6 +160,17 @@ describe "Tagger" do
       it "creates a new tagalong tag for the tagger" do
         Tagalong::TagalongTag.should_receive(:create!).with(hash_including({:tagger_id => @user.id, :tagger_type => @user.class.to_s, :name => 'tag4'}))
         @user.create_tag('tag4')
+      end
+    end
+
+    describe "#has_tag?" do
+      it "should try the list of tags for the tagger" do
+        @user.stub_chain(:tags, :include)
+        tags = stub('tags')
+        tags.stub(:include?)
+        @user.should_receive(:tags).and_return(tags)
+        tags.should_receive(:include?).with('tag5')
+        @user.has_tag?('tag5')
       end
     end
 

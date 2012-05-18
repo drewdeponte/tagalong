@@ -37,6 +37,10 @@ module Tagalong
         end
       end
 
+      def has_tag?(tag_name)
+        tags.include?(tag_name)
+      end
+
       def tags
         self.tagalong_tags.order("name ASC").map { |r| r.name }
       end
