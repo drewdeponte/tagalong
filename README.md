@@ -94,15 +94,30 @@ To list Tagger tags, call the `tags` method on a Tagger object. This will return
     @user.tags
     # => ['another_tag', 'some_tag', 'woot_tag']
 
-### List Tagger tags with usage info
+### List Tagger tags with more information
 
-To list Tagger tags with usage info, call the `tags` method on a Tagger object passing in a Taggable object. This will return a list of hash objects containing the tag ( **:tag** ), a boolean representing if the Taggable passed in is currently tagged with that tag ( **:used** ), and the number of references of that tag by the Tagger ( **:number_of_references** ). The resulting list of hashes is ordered by tag in ascending alphabetical order.
+You can get a list of tags that belong to a Tagger along with some additional information by calling the `tags_including` method. The result will be a hash that always contains the key **:name** which is the name of the tag. There can be other keys added to the hash if you choose to pass the option for them to the method. A list of the params you can pass and their explanations are below:
 
-    @user.tags(@contact)
+##### :number_of_references => true
+
+This only takes true as a value. When passed, it will add **:number_of_references** to the result hash. The value of **:number_of_references** is the number of times the tag is used by the Tagger.
+
+    @user.tags_including(:number_of_references => true)
     # => [
-           { tag: 'another_tag', :used => false, :number_of_references => 42 },
-           { tag: 'some_tag', :used => true, :number_of_references => 23 },
-           { tag: 'woot_tag', :used => true, :number_of_references => 2 }
+           { tag: 'another_tag', :number_of_references => 42 },
+           { tag: 'some_tag', :number_of_references => 23 },
+           { tag: 'woot_tag', :number_of_references => 2 }
+         ]
+
+##### :has_been_tagged => @contact
+
+Takes a Taggable as a value. When passed, it will add **:has_been_tagged** to the result hash for each tag returned. The value of **:has_been_tagged** will contain a boolean representing if the Taggable passed is currently tagged by the Tagger.
+
+    @user.tags_including(:has_been_tagged => @contact)
+    # => [
+           { tag: 'another_tag', :has_been_tagged => true },
+           { tag: 'some_tag', :has_been_tagged => false },
+           { tag: 'woot_tag', :has_been_tagged => true }
          ]
 
 ### List Taggable tags

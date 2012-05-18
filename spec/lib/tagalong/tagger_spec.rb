@@ -63,43 +63,40 @@ describe "Tagger" do
           @user.tags.should == ["bar", "car", "foo"]
         end
       end
+    end
 
-      context "with a taggable" do
-        it "returns a hash of the tags with usage information about the passed taggable" do
-          tag = @user.tagalong_tags.create!(:name => "foo", :number_of_references => 1)
-          @contact.tagalong_taggings.create!(:tagalong_tag_id => tag.id)
-          @user.tagalong_tags.create!(:name => "bar", :number_of_references => 0)
-          tag = @user.tagalong_tags.create!(:name => "car", :number_of_references => 1)
-          @contact.tagalong_taggings.create!(:tagalong_tag_id => tag.id)
-          @user.tags(@contact).should == [
-            { :tag => "bar", :used => false, :number_of_references => 0 },
-            { :tag => "car", :used => true, :number_of_references => 1 },
-            { :tag => "foo", :used => true, :number_of_references => 1  }
+    describe "#tags_including" do
+      before(:each) do
+        @user.tag(@contact, "tag1")
+        @user.tag(@contact, "tag2")
+      end
+
+      context "without options passed" do
+        it "should return an array of hashes with name" do
+          @user.tags_including.should == [
+            {:name => 'tag1'},
+            {:name => 'tag2'}
           ]
         end
-
-        it "returns a hash of tags with usage information about the passed taggable on secondary calls when the taggable changes" do
-          tag = @user.tagalong_tags.create!(:name => "foo", :number_of_references => 1)
-          @contact.tagalong_taggings.create!(:tagalong_tag_id => tag.id)
-          @user.tagalong_tags.create!(:name => "bar", :number_of_references => 0)
-          tag = @user.tagalong_tags.create!(:name => "car", :number_of_references => 1)
-          @contact.tagalong_taggings.create!(:tagalong_tag_id => tag.id)
-          @user.tags(@contact).should == [
-            { :tag => "bar", :used => false, :number_of_references => 0 },
-            { :tag => "car", :used => true, :number_of_references => 1 },
-            { :tag => "foo", :used => true, :number_of_references => 1  }
+      end
+      
+      context "with number_of_references passed" do
+        it "should return an array of hashes with name and number_of_references" do
+          @user.tags_including(:number_of_references => true).should == [
+            {:name => 'tag1', :number_of_references => 1},
+            {:name => 'tag2', :number_of_references => 1}
           ]
-          @other_contact = Contact.create!(:name => "My Other Taggable")
-          tag = @user.tagalong_tags.create!(:name => "jones", :number_of_references => 1)
-          @other_contact.tagalong_taggings.create!(:tagalong_tag_id => tag.id)
-          tag = @user.tagalong_tags.create!(:name => "jimmy", :number_of_references => 2)
-          @other_contact.tagalong_taggings.create!(:tagalong_tag_id => tag.id)
-          @user.tags(@other_contact).should == [
-            { :tag => "bar", :used => false, :number_of_references => 0 },
-            { :tag => "car", :used => false, :number_of_references => 1 },
-            { :tag => "foo", :used => false, :number_of_references => 1  },
-            { :tag => "jimmy", :used => true, :number_of_references => 2  },
-            { :tag => "jones", :used => true, :number_of_references => 1 }
+        end
+      end
+
+      context "with a valid taggable passed as has_been_tagged" do
+        it "should return an array of hashes with name and has_been_tagged" do
+          @contact2 = Contact.create!(:name => "My Taggable 2")
+          @user.tag(@contact2, 'tag3')
+          @user.tags_including(:has_been_tagged => @contact).should == [
+            {:name => 'tag1', :has_been_tagged => true},
+            {:name => 'tag2', :has_been_tagged => true},
+            {:name => 'tag3', :has_been_tagged => false}
           ]
         end
       end
