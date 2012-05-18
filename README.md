@@ -137,6 +137,13 @@ To check if a Taggable is tagged with a tag, call the `tagged_with?` method on a
     @contact.tagged_with?('some_tag')
     # => true
 
+### Check if Tagger has a tag
+
+To check if a Tagger has a specific tag, call the `has_tag?` method. This will always return a boolean representing if the Tagger has used the passed tag (and not deleted it).
+
+  @user.has_tag?('sometag')
+  # => true
+
 ### Tag Management
 
 ##### Creating
