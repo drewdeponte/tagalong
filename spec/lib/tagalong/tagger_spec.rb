@@ -17,6 +17,13 @@ describe "Tagger" do
       end
     end
 
+    describe "#create_tag" do
+      it "creates a new unassigned tag on the tagger" do
+        @user.create_tag('tag4')
+        @user.tags.should include('tag4')
+      end
+    end
+
     describe "#untag" do
       it "untags the tag from the given taggable object for the tagger" do
         @contact.tagalong_tags.create!(:name => "bar", :tagger_id => @user.id, :tagger_type => @user.class.to_s)
@@ -132,6 +139,13 @@ describe "Tagger" do
       it "raises taggable not persisted exception if attempting to tag a non-persisted taggable" do
         new_contact = Contact.new
         lambda { @user.tag(new_contact, "bar") }.should raise_error(Tagalong::TaggableNotPersisted)
+      end
+    end
+
+    describe "#create_tag" do
+      it "creates a new tagalong tag for the tagger" do
+        Tagalong::TagalongTag.should_receive(:create!).with(hash_including({:tagger_id => @user.id, :tagger_type => @user.class.to_s, :name => 'tag4'}))
+        @user.create_tag('tag4')
       end
     end
 
