@@ -139,7 +139,7 @@ To check if a Taggable is tagged with a tag, call the `tagged_with?` method on a
 
 ### Check if Tagger has a tag
 
-To check if a Tagger has a specific tag, call the `has_tag?` method. This will always return a boolean representing if the Tagger has used the passed tag (and not deleted it).
+To check if a Tagger has a specific tag, call the `has_tag?` method. This will return a boolean representing if the Tagger has used the passed tag (and not deleted it).
 
     @user.has_tag?('sometag')
     # => true
