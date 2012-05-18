@@ -14,3 +14,13 @@ if defined?(ActiveRecord::Base)
     include Tagalong::Tagger
   end
 end
+
+module Tagalong
+  def self.enable_sunspot
+    Tagalong::TagalongTag.searchable do
+      integer :tagger_id
+      string :tagger_type
+      text :name, :stored => true
+    end
+  end
+end
