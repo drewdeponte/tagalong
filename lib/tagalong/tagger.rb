@@ -33,15 +33,32 @@ module Tagalong
         end
       end
 
-      def tags(taggable = nil)
-        if taggable == nil
-          return self.tagalong_tags.order("name ASC").map { |r| r.name }
-        else
-          return self.tagalong_tags.
-                  joins("LEFT OUTER JOIN tagalong_taggings ON tagalong_taggings.tagalong_tag_id = tagalong_tags.id AND tagalong_taggings.taggable_id = '#{taggable.id.to_s}'").
-                  select("tagalong_tags.id, tagalong_tags.name, tagalong_tags.number_of_references, tagalong_taggings.id as used").
-                  order("name ASC").map { |r| { :tag => r.name, :used => !r.used.nil?, :number_of_references => r.number_of_references } }
+      def tags
+        self.tagalong_tags.order("name ASC").map { |r| r.name }
+      end
+
+      def tags_including(options={})
+        out = []
+        query = self.tagalong_tags.order("name ASC")
+
+        if options[:has_been_tagged]
+          query = query.
+                    select("tagalong_tags.id, tagalong_tags.name, tagalong_tags.number_of_references, tagalong_taggings.id as used").
+                    joins("LEFT OUTER JOIN tagalong_taggings ON tagalong_taggings.tagalong_tag_id = tagalong_tags.id AND tagalong_taggings.taggable_id = '#{options[:has_been_tagged].id.to_s}'")
         end
+        
+        query.each do |tag|
+          hash = {:name => tag.name}
+          if options[:number_of_references]
+            hash[:number_of_references] = tag.number_of_references
+          end
+          if options[:has_been_tagged]
+            hash[:has_been_tagged] = !tag.used.nil?
+          end
+          out << hash
+        end
+        
+        return out
       end
 
       def taggables_with(name)
