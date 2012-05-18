@@ -104,9 +104,9 @@ This only takes true as a value. When passed, it will add **:number_of_reference
 
     @user.tags_including(:number_of_references => true)
     # => [
-           { tag: 'another_tag', :number_of_references => 42 },
-           { tag: 'some_tag', :number_of_references => 23 },
-           { tag: 'woot_tag', :number_of_references => 2 }
+           { name: 'another_tag', :number_of_references => 42 },
+           { name: 'some_tag', :number_of_references => 23 },
+           { name: 'woot_tag', :number_of_references => 2 }
          ]
 
 ##### :has_been_tagged => @contact
@@ -115,9 +115,9 @@ Takes a Taggable as a value. When passed, it will add **:has_been_tagged** to th
 
     @user.tags_including(:has_been_tagged => @contact)
     # => [
-           { tag: 'another_tag', :has_been_tagged => true },
-           { tag: 'some_tag', :has_been_tagged => false },
-           { tag: 'woot_tag', :has_been_tagged => true }
+           { name: 'another_tag', :has_been_tagged => true },
+           { name: 'some_tag', :has_been_tagged => false },
+           { name: 'woot_tag', :has_been_tagged => true }
          ]
 
 ### List Taggable tags
