@@ -111,7 +111,7 @@ This only takes true as a value. When passed, it will add **:number_of_reference
 
 ##### :has_been_tagged => @contact
 
-Takes a Taggable as a value. When passed, it will add **:has_been_tagged** to the result hash for each tag returned. The value of **:has_been_tagged** will contain a boolean representing if the Taggable passed is currently tagged by the Tagger.
+Takes a Taggable as a value. When passed, it will add **:has_been_tagged** to the result hash for each tag returned. The value of **:has_been_tagged** will contain a boolean representing if the Taggable passed is tagged by the current tag in the iteration.
 
     @user.tags_including(:has_been_tagged => @contact)
     # => [
