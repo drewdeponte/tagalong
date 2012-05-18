@@ -20,6 +20,10 @@ module Tagalong
         tag_manager.add_tag(tag_name)
       end
 
+      def create_tag(tag_name)
+        TagalongTag.create!(:tagger_id => self.id, :tagger_type => self.class.to_s, :name => tag_name)
+      end
+
       def untag(taggable_obj, tag_name)
         raise Tagalong::TaggableNotPersisted, "Taggable must be persisted to untag it." if !taggable_obj.persisted?
         tag_manager = Tagalong::TagManager.new(taggable_obj, self)
