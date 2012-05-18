@@ -2,8 +2,8 @@
 require File.expand_path('../lib/tagalong/version', __FILE__)
 
 Gem::Specification.new do |gem|
-  gem.authors       = ["Andrew De Ponte"]
-  gem.email         = ["cyphactor@gmail.com"]
+  gem.authors       = ["Andrew De Ponte", "Russ Cloak"]
+  gem.email         = ["cyphactor@gmail.com", "russcloak@gmail.com"]
   gem.description   = %q{A Rails tagging plugin that makes sense.}
   gem.summary       = %q{A Rails tagging plugin that makes sense.}
   gem.homepage      = "http://github.com/cyphactor/tagalong"
