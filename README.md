@@ -69,24 +69,20 @@ It is necessary to declare at least one Tagger and Taggable in addition to gener
 
 Once Taggers and Taggables are declared, they can be used in numerous ways as outlined below.
 
-### Tagging
+### Tag Usage
 
-To tag, call the `tag` method on a Tagger object and hand it a persisted Taggable object with the given label that you want to apply.
+##### Tagging
+
+To tag a taggable, call the `tag` method on a Tagger object and hand it a persisted Taggable object with the given label that you want to apply.
 
     @user.tag(@contact, "sometag")
-
-### Untagging
+    
+##### Untagging
 
 To untag, call the `untag` method on a Tagger object and hand it a persisted Taggable object with the given label that you want to untag.
 
     @user.untag(@contact, "sometag")
-
-### Deleting
-
-To delete a tag, call the `delete_tag` method on a Tagger object and hand it the label of the tag you want to delete. This will remove the tag from the Tagger, as well as all Taggables that might be using it.
-
-    @user.delete_tag("sometag")
-
+    
 ### List Tagger tags
 
 To list Tagger tags, call the `tags` method on a Tagger object. This will return an array of all tags that Tagger has ever used in ascending alphabetical order.
@@ -140,6 +136,21 @@ To check if a Taggable is tagged with a tag, call the `tagged_with?` method on a
 
     @contact.tagged_with?('some_tag')
     # => true
+
+### Tag Management
+
+##### Creating
+
+To create a tag on the Tagger object without applying the tag to a Taggable, call the `create_tag` method.
+
+  @user.create_tag("sometag")
+
+
+##### Deleting
+
+To delete a tag, call the `delete_tag` method on a Tagger object and hand it the label of the tag you want to delete. This will remove the tag from the Tagger, as well as all Taggables that might be using it.
+
+    @user.delete_tag("sometag")
 
 ## Credits
 
