@@ -10,7 +10,7 @@ require 'sunspot_solr'
 require 'net/http'
 
 def solr_startup_timeout
-  15
+  60
 end
 
 def solr_running?
@@ -26,9 +26,9 @@ end
 def wait_until_solr_starts
   (solr_startup_timeout * 10).times do
     break if solr_running?
-    sleep(0.1)
+    sleep(1)
   end
-  raise TimeOutError, "Solr failed to start after #{solr_startup_timeout} seconds" unless solr_running?
+  raise "Solr failed to start after #{solr_startup_timeout} seconds" unless solr_running?
 end
 
 RSpec.configure do |c|
