@@ -17,3 +17,4 @@ test/version_tmp
 tmp
 spec/debug.log
 *.sqlite3
+sunspot-solr.pid

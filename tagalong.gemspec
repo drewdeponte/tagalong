@@ -21,4 +21,5 @@ Gem::Specification.new do |gem|
   gem.add_development_dependency "rake"
   gem.add_development_dependency "sunspot_rails"
   gem.add_development_dependency "sunspot_solr"
+  gem.add_development_dependency "sunspot_test"
 end

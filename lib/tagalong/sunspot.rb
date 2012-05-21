@@ -9,7 +9,8 @@ module Tagalong
   def self.enable_sunspot
     Sunspot::Adapters::InstanceAdapter.register(Sunspot::Rails::Adapters::ActiveRecordInstanceAdapter, ActiveRecord::Base)
     Sunspot::Adapters::DataAccessor.register(Sunspot::Rails::Adapters::ActiveRecordDataAccessor, ActiveRecord::Base)
-    ::Sunspot.setup(Tagalong::TagalongTag) do
+    ActiveRecord::Base.module_eval { include(Sunspot::Rails::Searchable) }
+    Tagalong::TagalongTag.searchable do
       integer :tagger_id
       integer :number_of_references
       string :tagger_type
@@ -18,12 +19,10 @@ module Tagalong
   end
 
   def self.sunspot_enabled?
-    Sunspot.searchable.include?(Tagalong::TagalongTag)
+    Tagalong::TagalongTag.searchable? ? true : false
   end
 
   def self.reindex_sunspot
-    Sunspot.remove_all(Tagalong::TagalongTag)
-    Sunspot.index!(Tagalong::TagalongTag.all)
-    Sunspot.commit
+    Tagalong::TagalongTag.reindex
   end
 end

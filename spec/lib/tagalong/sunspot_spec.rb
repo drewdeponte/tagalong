@@ -26,7 +26,7 @@ describe "Tagalong Sunspot Support" do
 
   describe "#sunspot_enabled" do
     it "return false if #enable_sunspot has NOT previously been called" do
-      Sunspot.stub(:searchable).and_return([])
+      Tagalong::TagalongTag.stub(:searchable?).and_return(false)
       Tagalong.sunspot_enabled?.should be_false
     end
 
@@ -38,11 +38,7 @@ describe "Tagalong Sunspot Support" do
 
   describe "#reindex_sunspot" do
     it "reindexes the Sunspot solr index for the supported models" do
-      tag_records = stub
-      Tagalong::TagalongTag.stub(:all).and_return(tag_records)
-      Sunspot.should_receive(:remove_all).with(Tagalong::TagalongTag)
-      Sunspot.should_receive(:index!).with(tag_records)
-      Sunspot.should_receive(:commit)
+      Tagalong::TagalongTag.should_receive(:reindex)
       Tagalong.reindex_sunspot
     end
   end

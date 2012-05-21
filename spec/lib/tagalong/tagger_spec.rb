@@ -151,9 +151,10 @@ describe "Tagger" do
           @user.tagalong_tags.create!(:name => "bar foo house", :number_of_references => 3)
           @user.tagalong_tags.create!(:name => "hello foo bar town", :number_of_references => 2)
 
-          Sunspot.remove_all(Tagalong::TagalongTag)
-          Sunspot.index!(Tagalong::TagalongTag.all)
-          Sunspot.commit
+          # Sunspot.remove_all(Tagalong::TagalongTag)
+          # Sunspot.index!(Tagalong::TagalongTag.all)
+          # Sunspot.commit
+          Tagalong::TagalongTag.reindex
 
           @user.tags_matching("foo bar").should == [
             { :name => 'hello foo bar town', :number_of_references => 2 },
