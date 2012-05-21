@@ -1,0 +1,50 @@
+require 'spec_helper'
+
+describe "Tagalong Sunspot Support" do
+  describe "#enable_sunspot" do
+    it "registers ActiveRecord instance adapter" do
+      Sunspot::Adapters::DataAccessor.stub(:register)
+      Sunspot.stub(:setup)
+      Sunspot::Adapters::InstanceAdapter.should_receive(:register).with(Sunspot::Rails::Adapters::ActiveRecordInstanceAdapter, ActiveRecord::Base)
+      Tagalong.enable_sunspot
+    end
+
+    it "registers ActiveRecord data adapter"  do
+      Sunspot::Adapters::InstanceAdapter.stub(:register)
+      Sunspot.stub(:setup)
+      Sunspot::Adapters::DataAccessor.should_receive(:register).with(Sunspot::Rails::Adapters::ActiveRecordDataAccessor, ActiveRecord::Base)
+      Tagalong.enable_sunspot
+    end
+    
+    it "sets up indexing of the Tagalong::TagalongTag by sunspot" do
+      Sunspot::Adapters::InstanceAdapter.stub(:register)
+      Sunspot::Adapters::DataAccessor.stub(:register)
+      Sunspot.should_receive(:setup).with(Tagalong::TagalongTag)
+      Tagalong.enable_sunspot
+    end
+  end
+
+  describe "#sunspot_enabled" do
+    # FIXME: Currently this has to be before this because test are run in a non-deterministic
+    # fashion and sunspot can't be enabled when this test runs.
+    it "return false if #enable_sunspot has NOT previously been called" do
+      Tagalong.sunspot_enabled?.should be_false
+    end
+
+    it "returns true if #enable_sunspot has previously been called" do
+      Tagalong.enable_sunspot
+      Tagalong.sunspot_enabled?.should be_true
+    end
+  end
+
+  describe "#reindex_sunspot" do
+    it "reindexes the Sunspot solr index for the supported models" do
+      tag_records = stub
+      Tagalong::TagalongTag.stub(:all).and_return(tag_records)
+      Sunspot.should_receive(:remove_all).with(Tagalong::TagalongTag)
+      Sunspot.should_receive(:index!).with(tag_records)
+      Sunspot.should_receive(:commit)
+      Tagalong.reindex_sunspot
+    end
+  end
+end
