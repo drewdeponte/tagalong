@@ -25,9 +25,8 @@ describe "Tagalong Sunspot Support" do
   end
 
   describe "#sunspot_enabled" do
-    # FIXME: Currently this has to be before this because test are run in a non-deterministic
-    # fashion and sunspot can't be enabled when this test runs.
     it "return false if #enable_sunspot has NOT previously been called" do
+      Sunspot.stub(:searchable).and_return([])
       Tagalong.sunspot_enabled?.should be_false
     end
 
