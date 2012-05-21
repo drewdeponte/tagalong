@@ -5,8 +5,8 @@ require 'spec_helper'
 
 describe "Tagger" do
   before(:each) do
-    @user = User.create!(:name => "My Owner")
-    @contact = Contact.create!(:name => "My Taggable")
+    @user = User.create!(:name => "Tagger")
+    @contact = Contact.create!(:name => "Taggable")
   end
   
   describe "Integration" do
@@ -118,6 +118,46 @@ describe "Tagger" do
             {:name => 'tag1', :has_been_tagged => true},
             {:name => 'tag2', :has_been_tagged => true},
             {:name => 'tag3', :has_been_tagged => false}
+          ]
+        end
+      end
+    end
+
+    describe "#tags_matching" do
+      context "have not enabled sunspot" do
+        before(:each) do
+          Tagalong.stub(:sunspot_enabled?).and_return(false)
+        end
+
+        it "returns an array of hashes representing tags that match the given search phrase ordered by number of references descending" do
+          @user.tagalong_tags.create!(:name => "foo bar kitty", :number_of_references => 1)
+          @user.tagalong_tags.create!(:name => "bar foo house", :number_of_references => 3)
+          @user.tagalong_tags.create!(:name => "hello foo bar town", :number_of_references => 2)
+          @user.tags_matching("foo bar").should == [
+            { :name => 'hello foo bar town' },
+            { :name => 'foo bar kitty' }
+          ]
+        end
+      end
+
+      context "have enabled sunspot", :search => true do
+        before(:each) do
+          Tagalong.enable_sunspot
+          Tagalong.stub(:sunspot_enabled?).and_return(true)
+        end
+
+        it "returns an array of hashes representing tags that match the given search phrase ordered by number of references descending" do
+          @user.tagalong_tags.create!(:name => "foo bar kitty", :number_of_references => 1)
+          @user.tagalong_tags.create!(:name => "bar foo house", :number_of_references => 3)
+          @user.tagalong_tags.create!(:name => "hello foo bar town", :number_of_references => 2)
+
+          Sunspot.remove_all(Tagalong::TagalongTag)
+          Sunspot.index!(Tagalong::TagalongTag.all)
+          Sunspot.commit
+
+          @user.tags_matching("foo bar").should == [
+            { :name => 'hello foo bar town', :number_of_references => 2 },
+            { :name => 'foo bar kitty', :number_of_references => 1 }
           ]
         end
       end

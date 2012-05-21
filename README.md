@@ -116,6 +116,18 @@ Takes a Taggable as a value. When passed, it will add **:has_been_tagged** to th
            { name: 'woot_tag', :has_been_tagged => true }
          ]
 
+### Search Tagger tags
+
+A Tagger's tags can be searched for using the `matching_tags` method and a given search phrase as follows:
+
+    @user.matching_tags("cats have")
+    # => [
+           { name: 'cats have 9 lives', :number_of_references => 42 },
+           { name: 'what do cats have', :number_of_references => 23 },
+         ]
+
+The above returns an array of hashes representing tags ordered in descending order of their number of references. **Note:** This function by default simply uses the ActiveRecord backend to search for matching tags. However, this method switches to using Sunspot to handle the searching if Sunspot has been enabled for this plugin. For more information please see the **Sunspot** section below.
+
 ### List Taggable tags
 
 To list Taggable tags, call the `tags` method on a Taggable object. This will return an array of all tags that Taggable is currently tagged with in ascending alphabetical order.
@@ -157,6 +169,13 @@ To create a tag on the Tagger object without applying the tag to a Taggable, cal
 To delete a tag, call the `delete_tag` method on a Tagger object and hand it the label of the tag you want to delete. This will remove the tag from the Tagger, as well as all Taggables that might be using it.
 
     @user.delete_tag("sometag")
+
+### Sunspot
+
+Tagalong currently supports Sunspot for searching tags. In order to use Sunspot for searching tags a few things need to happen in the client Rails application.
+
+1. Add Sunspot to your Rails app as you normally would
+2. Create a Rails initializer file called `tagalong.rb` that contains `Tagalong.enable_sunspot`.
 
 ## Credits
 

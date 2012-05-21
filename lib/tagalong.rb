@@ -7,6 +7,7 @@ require "tagalong/tagalong_tagging"
 require "tagalong/tag_manager"
 require "tagalong/taggable"
 require "tagalong/tagger"
+require "tagalong/sunspot"
 
 if defined?(ActiveRecord::Base)
   class ActiveRecord::Base

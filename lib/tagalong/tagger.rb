@@ -69,6 +69,21 @@ module Tagalong
         return out
       end
 
+      def tags_matching(search_phrase)
+        if Tagalong.sunspot_enabled?
+          tmp_tagger_type = self.class.to_s # this is needed because self.class apparently changes inside the Sunspot.search scope.
+          tag_search = Sunspot.search(Tagalong::TagalongTag) do
+            fulltext "\"#{search_phrase}\""
+            with :tagger_id, self.id
+            with :tagger_type, tmp_tagger_type
+            order_by(:number_of_references, :desc)
+          end
+          tag_search.results.map { |r| { :name => r.name, :number_of_references => r.number_of_references } }
+        else
+          self.tagalong_tags.order("number_of_references DESC").where("name like ?", ["%#{search_phrase}%"]).map { |r| { :name => r.name } }
+        end
+      end
+
       def taggables_with(name)
         self.tagalong_tags.where(:name => name).each do |t|
           return t.taggables
