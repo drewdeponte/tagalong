@@ -14,7 +14,7 @@ RSpec.configure do |c|
 
   c.before(:all, :search => true) do
     Sunspot::Solr::Server.new.start
-    sleep 7
+    sleep 10
   end
 
   c.before(:each, :search => true) do
