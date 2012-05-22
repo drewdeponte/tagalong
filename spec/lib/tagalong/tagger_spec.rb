@@ -20,29 +20,29 @@ describe "Tagger" do
     describe "#create_tag" do
       it "creates a new unassigned tag on the tagger" do
         @user.create_tag('tag4')
-        @user.tags.should include('tag4')
+        @user.tagalong_tags.map { |t| t.name }.should include('tag4')
       end
 
       it "should not create the tag if the name is already in use" do
         @user.create_tag('tag4')
-        lambda {@user.create_tag('tag4')}.should raise_error(ActiveRecord::RecordInvalid)
+        lambda { @user.create_tag('tag4') }.should raise_error(ActiveRecord::RecordInvalid)
       end
     end
 
     describe "#rename_tag" do
       context "when the tagger owns the tag being renamed" do
         before(:each) do
-          @user.create_tag('tag5')
+          @user.tagalong_tags.create!(:name => 'tag5')
         end
 
         it "changes the name of a tag" do
           @user.rename_tag('tag5', 'renamedTag5')
-          @user.tags.should == ['renamedTag5']
+          @user.tagalong_tags.map { |t| t.name }.should == ['renamedTag5']
         end
 
         it "should not change the name of the tag if the name is already in use" do
-          @user.create_tag('renamedTag5')
-          lambda {@user.rename_tag('tag5', 'renamedTag5')}.should raise_error(ActiveRecord::RecordInvalid)
+          @user.tagalong_tags.create!(:name => 'renamedTag5')
+          lambda { @user.rename_tag('tag5', 'renamedTag5') }.should raise_error(ActiveRecord::RecordInvalid)
         end
 
         it "should return true if rename was successfull" do
@@ -53,7 +53,7 @@ describe "Tagger" do
       context "when the tagger does not own the tag being renamed" do
         it "should not add a tag of the new name" do
           @user.rename_tag('tagDoesntExist', 'renamedTag6')
-          @user.tags.should_not include('renamedTag6')
+          @user.tagalong_tags.should_not include('renamedTag6')
         end
 
         it "should return false if rename fails" do
@@ -64,7 +64,7 @@ describe "Tagger" do
 
     describe "#untag" do
       it "untags the tag from the given taggable object for the tagger" do
-        @contact.tagalong_tags.create!(:name => "bar", :tagger_id => @user.id, :tagger_type => @user.class.to_s)
+        @contact.tagalong_tags.create!(:name => "bar", :tagger => @user)
         @user.untag(@contact, "bar")
         @contact.tagalong_tags.map { |r| r.name }.should_not include("bar")
       end
@@ -72,12 +72,12 @@ describe "Tagger" do
 
     describe "#delete_tag" do
       before(:each) do
-        @user.tag(@contact, "tag1")
+        @contact.tagalong_tags.create!(:name => "tag1", :tagger => @user)
       end
 
       it "should disassociate the tag that belongs to it" do
         @user.delete_tag('tag1')
-        @user.tags.should_not include("tag1")
+        @user.tagalong_tags.should_not include("tag1")
       end
 
       it "should destroy the tag record from the db" do
@@ -95,14 +95,14 @@ describe "Tagger" do
     describe "#has_tag?" do
       context "the tagger has the tag" do
         before(:each) do
-          @user.create_tag('tag5')
+          @user.tagalong_tags.create!(:name => 'tag5')
         end
 
-        it {@user.has_tag?('tag5').should be_true}
+        it { @user.has_tag?('tag5').should be_true }
       end
 
       context "the tagger does not have the tag" do
-        it {@user.has_tag?('tag99').should be_false}
+        it { @user.has_tag?('tag99').should be_false }
       end
     end
 
@@ -126,8 +126,8 @@ describe "Tagger" do
 
     describe "#tags_including" do
       before(:each) do
-        @user.tag(@contact, "tag1")
-        @user.tag(@contact, "tag2")
+        @contact.tagalong_tags.create!(:name => "tag1", :number_of_references => 1, :tagger => @user)
+        @contact.tagalong_tags.create!(:name => "tag2", :number_of_references => 1, :tagger => @user)
       end
 
       context "without options passed" do
@@ -151,7 +151,7 @@ describe "Tagger" do
       context "with a valid taggable passed as has_been_tagged" do
         it "should return an array of hashes with name and has_been_tagged" do
           @contact2 = Contact.create!(:name => "My Taggable 2")
-          @user.tag(@contact2, 'tag3')
+          @contact2.tagalong_tags.create!(:name => "tag3", :tagger => @user)
           @user.tags_including(:has_been_tagged => @contact).should == [
             {:name => 'tag1', :has_been_tagged => true},
             {:name => 'tag2', :has_been_tagged => true},
@@ -204,7 +204,7 @@ describe "Tagger" do
 
     describe "#taggables_with" do
       it "returns a collection of the taggables tagged with the given tag" do
-        @user.tag(@contact, "jackson")
+        @contact.tagalong_tags.create!(:name => "jackson", :tagger => @user)
         @user.taggables_with("jackson").should == [@contact]
       end
 
