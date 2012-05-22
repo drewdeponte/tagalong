@@ -21,7 +21,19 @@ module Tagalong
       end
 
       def create_tag(tag_name)
+        raise Tagalong::TagAlreadyInUse, "A tag already exists with the name '#{tag_name}'" if tagalong_tags.find_by_name(tag_name).present?
+        raise Tagalong::TagCannotBeBlank, "A tag cannot have a blank name" if tag_name.blank?
         TagalongTag.create!(:tagger_id => self.id, :tagger_type => self.class.to_s, :name => tag_name)
+      end
+
+      def rename_tag(existing_tag, rename_to)
+        if tag = tagalong_tags.find_by_name(existing_tag)
+          tag.name = rename_to
+          raise Tagalong::TagAlreadyInUse, "A tag already exists with the name '#{tag.name}'" unless tag.valid?
+          tag.save!
+        else
+          raise Tagalong::TagNotFound, "Tried to rename a tag that does not exist."
+        end
       end
 
       def untag(taggable_obj, tag_name)
