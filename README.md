@@ -164,6 +164,12 @@ To create a tag on the Tagger object without applying the tag to a Taggable, cal
 
     @user.create_tag("sometag")
 
+##### Renaming
+
+To rename a tag that exists on a Tagger object, simply call the `rename_tag` method with the existing tag and new desired name. If the name is already in use, it will raise an ActiveRecord::RecordInvalid error.
+
+    @user.rename_tag("sometag", "another_tag_name")
+
 ##### Deleting
 
 To delete a tag, call the `delete_tag` method on a Tagger object and hand it the label of the tag you want to delete. This will remove the tag from the Tagger, as well as all Taggables that might be using it.
