@@ -25,7 +25,11 @@ describe "Tagger" do
 
       it "should not create the tag if the name is already in use" do
         @user.create_tag('tag4')
-        lambda { @user.create_tag('tag4') }.should raise_error(ActiveRecord::RecordInvalid)
+        lambda { @user.create_tag('tag4') }.should raise_error(Tagalong::TagAlreadyInUse)
+      end
+
+      it "should raise a cannot be blank error if the name is blank" do
+        lambda { @user.create_tag('') }.should raise_error(Tagalong::TagCannotBeBlank)
       end
     end
 
@@ -42,7 +46,7 @@ describe "Tagger" do
 
         it "should not change the name of the tag if the name is already in use" do
           @user.tagalong_tags.create!(:name => 'renamedTag5')
-          lambda { @user.rename_tag('tag5', 'renamedTag5') }.should raise_error(ActiveRecord::RecordInvalid)
+          lambda { @user.rename_tag('tag5', 'renamedTag5') }.should raise_error(Tagalong::TagAlreadyInUse)
         end
 
         it "should return true if rename was successfull" do
@@ -51,14 +55,20 @@ describe "Tagger" do
       end
 
       context "when the tagger does not own the tag being renamed" do
-        it "should not add a tag of the new name" do
-          @user.rename_tag('tagDoesntExist', 'renamedTag6')
-          @user.tagalong_tags.should_not include('renamedTag6')
+        it "should raise a tag not found error" do
+          lambda { @user.rename_tag('tagDoesntExist', 'renamedTag6') }.should raise_error(Tagalong::TagNotFound)
         end
 
-        it "should return false if rename fails" do
-          @user.rename_tag('tag10', 'renamedTag10').should be_false
+        it "should not let you update another taggers tag" do
+          @user2 = User.create!(:name => "Tagger 2")
+          @contact2 = Contact.create!(:name => "Taggable 2")
+          @contact2.tagalong_tags.create!(:name => "tag20", :tagger => @user2)
+          lambda { @user.rename_tag('tag20', 'renamedTag20') }.should raise_error(Tagalong::TagNotFound)
         end
+      end
+
+      it "should return raise an exception if the tag doesnt exist" do
+        lambda { @user.rename_tag('tagThatDoesntExist', 'something') }.should raise_error(Tagalong::TagNotFound)
       end
     end
 
@@ -244,16 +254,17 @@ describe "Tagger" do
 
     describe "#rename_tag" do
       it "should find the tag by its name" do
-        Tagalong::TagalongTag.should_receive(:find_by_name).with('tag7')
+        tag = stub('tag', :name => 'tag7')
+        Tagalong::TagalongTag.should_receive(:find_by_name).with('tag7').and_return(tag)
+        tag.stub(:name=)
+        tag.stub(:save!)
+        tag.stub(:valid?).and_return(true)
         @user.rename_tag('tag7', 'renamedTag7')
       end
 
       it "should not save the tag if the Tagger doesn't own it" do
-        tag7 = mock('tag 7', {:name => 'tag7'})
-        Tagalong::TagalongTag.stub(:find_by_name).and_return(tag7)
-        @user.stub(:has_tag?).and_return(false)
-        tag7.should_not_receive(:save!)
-        @user.rename_tag('tag7', 'renamedTag7')
+        Tagalong::TagalongTag.stub(:find_by_name).and_return(false)
+        lambda { @user.rename_tag('tag7', 'renamedTag7') }.should raise_error(Tagalong::TagNotFound)
       end
 
       it "should assign and save the new tag name" do
@@ -261,6 +272,7 @@ describe "Tagger" do
         Tagalong::TagalongTag.stub(:find_by_name).and_return(tag8)
         @user.stub(:has_tag?).and_return(true)
         tag8.should_receive(:name=).with('renamedTag8')
+        tag8.stub(:valid?).and_return(true)
         tag8.stub(:save!)
         @user.rename_tag('tag8', 'renamedTag8')
       end
@@ -270,6 +282,7 @@ describe "Tagger" do
         Tagalong::TagalongTag.stub(:find_by_name).and_return(tag9)
         @user.stub(:has_tag?).and_return(true)
         tag9.stub(:name=)
+        tag9.stub(:valid?).and_return(true)
         tag9.should_receive(:save!)
         @user.rename_tag('tag9', 'renamedTag9')
       end
