@@ -24,6 +24,14 @@ module Tagalong
         TagalongTag.create!(:tagger_id => self.id, :tagger_type => self.class.to_s, :name => tag_name)
       end
 
+      def rename_tag(existing_tag, rename_to)
+        tag = TagalongTag.find_by_name(existing_tag)
+        if tag && has_tag?(tag.name)
+          tag.name = rename_to
+          tag.save!
+        end
+      end
+
       def untag(taggable_obj, tag_name)
         raise Tagalong::TaggableNotPersisted, "Taggable must be persisted to untag it." if !taggable_obj.persisted?
         tag_manager = Tagalong::TagManager.new(taggable_obj, self)

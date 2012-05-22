@@ -22,6 +22,44 @@ describe "Tagger" do
         @user.create_tag('tag4')
         @user.tags.should include('tag4')
       end
+
+      it "should not create the tag if the name is already in use" do
+        @user.create_tag('tag4')
+        lambda {@user.create_tag('tag4')}.should raise_error(ActiveRecord::RecordInvalid)
+      end
+    end
+
+    describe "#rename_tag" do
+      context "when the tagger owns the tag being renamed" do
+        before(:each) do
+          @user.create_tag('tag5')
+        end
+
+        it "changes the name of a tag" do
+          @user.rename_tag('tag5', 'renamedTag5')
+          @user.tags.should == ['renamedTag5']
+        end
+
+        it "should not change the name of the tag if the name is already in use" do
+          @user.create_tag('renamedTag5')
+          lambda {@user.rename_tag('tag5', 'renamedTag5')}.should raise_error(ActiveRecord::RecordInvalid)
+        end
+
+        it "should return true if rename was successfull" do
+          @user.rename_tag('tag5', 'renamedTag5').should be_true
+        end
+      end
+
+      context "when the tagger does not own the tag being renamed" do
+        it "should not add a tag of the new name" do
+          @user.rename_tag('tagDoesntExist', 'renamedTag6')
+          @user.tags.should_not include('renamedTag6')
+        end
+
+        it "should return false if rename fails" do
+          @user.rename_tag('tag10', 'renamedTag10').should be_false
+        end
+      end
     end
 
     describe "#untag" do
@@ -201,6 +239,39 @@ describe "Tagger" do
       it "creates a new tagalong tag for the tagger" do
         Tagalong::TagalongTag.should_receive(:create!).with(hash_including({:tagger_id => @user.id, :tagger_type => @user.class.to_s, :name => 'tag4'}))
         @user.create_tag('tag4')
+      end
+    end
+
+    describe "#rename_tag" do
+      it "should find the tag by its name" do
+        Tagalong::TagalongTag.should_receive(:find_by_name).with('tag7')
+        @user.rename_tag('tag7', 'renamedTag7')
+      end
+
+      it "should not save the tag if the Tagger doesn't own it" do
+        tag7 = mock('tag 7', {:name => 'tag7'})
+        Tagalong::TagalongTag.stub(:find_by_name).and_return(tag7)
+        @user.stub(:has_tag?).and_return(false)
+        tag7.should_not_receive(:save!)
+        @user.rename_tag('tag7', 'renamedTag7')
+      end
+
+      it "should assign and save the new tag name" do
+        tag8 = mock('tag 8', :name => 'tag8')
+        Tagalong::TagalongTag.stub(:find_by_name).and_return(tag8)
+        @user.stub(:has_tag?).and_return(true)
+        tag8.should_receive(:name=).with('renamedTag8')
+        tag8.stub(:save!)
+        @user.rename_tag('tag8', 'renamedTag8')
+      end
+
+      it "should save the tag if the Tagger owns it" do
+        tag9 = mock('tag 9', :name => 'tag9')
+        Tagalong::TagalongTag.stub(:find_by_name).and_return(tag9)
+        @user.stub(:has_tag?).and_return(true)
+        tag9.stub(:name=)
+        tag9.should_receive(:save!)
+        @user.rename_tag('tag9', 'renamedTag9')
       end
     end
 
