@@ -28,9 +28,9 @@ module Tagalong
 
       def rename_tag(existing_tag, rename_to)
         if tag = tagalong_tags.find_by_name(existing_tag)
-          tag.name = rename_to
-          raise Tagalong::TagAlreadyInUse, "A tag already exists with the name '#{tag.name}'" unless tag.valid?
-          tag.save!
+          raise Tagalong::TagAlreadyInUse, "A tag already exists with the name '#{rename_to}'" if tagalong_tags.find_by_name(rename_to).present?
+          raise Tagalong::TagCannotBeBlank, "A tag cannot have a blank name" if rename_to.blank?
+          tag.update_attribute(:name, rename_to)
         else
           raise Tagalong::TagNotFound, "Tried to rename a tag that does not exist."
         end
