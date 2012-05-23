@@ -52,6 +52,10 @@ describe "Tagger" do
         it "should return true if rename was successfull" do
           @user.rename_tag('tag5', 'renamedTag5').should be_true
         end
+
+        it "should raise a cannot be blank error if the name is blank" do
+          lambda { @user.rename_tag('tag5', '') }.should raise_error(Tagalong::TagCannotBeBlank)
+        end
       end
 
       context "when the tagger does not own the tag being renamed" do
@@ -256,9 +260,8 @@ describe "Tagger" do
       it "should find the tag by its name" do
         tag = stub('tag', :name => 'tag7')
         Tagalong::TagalongTag.should_receive(:find_by_name).with('tag7').and_return(tag)
-        tag.stub(:name=)
-        tag.stub(:save!)
-        tag.stub(:valid?).and_return(true)
+        Tagalong::TagalongTag.stub(:find_by_name).with('renamedTag7').and_return(false)
+        tag.stub(:update_attribute)
         @user.rename_tag('tag7', 'renamedTag7')
       end
 
@@ -267,23 +270,11 @@ describe "Tagger" do
         lambda { @user.rename_tag('tag7', 'renamedTag7') }.should raise_error(Tagalong::TagNotFound)
       end
 
-      it "should assign and save the new tag name" do
-        tag8 = mock('tag 8', :name => 'tag8')
-        Tagalong::TagalongTag.stub(:find_by_name).and_return(tag8)
-        @user.stub(:has_tag?).and_return(true)
-        tag8.should_receive(:name=).with('renamedTag8')
-        tag8.stub(:valid?).and_return(true)
-        tag8.stub(:save!)
-        @user.rename_tag('tag8', 'renamedTag8')
-      end
-
       it "should save the tag if the Tagger owns it" do
         tag9 = mock('tag 9', :name => 'tag9')
-        Tagalong::TagalongTag.stub(:find_by_name).and_return(tag9)
-        @user.stub(:has_tag?).and_return(true)
-        tag9.stub(:name=)
-        tag9.stub(:valid?).and_return(true)
-        tag9.should_receive(:save!)
+        Tagalong::TagalongTag.stub(:find_by_name).with('tag9').and_return(tag9)
+        Tagalong::TagalongTag.stub(:find_by_name).with('renamedTag9').and_return(false)
+        tag9.should_receive(:update_attribute).with(:name, 'renamedTag9')
         @user.rename_tag('tag9', 'renamedTag9')
       end
     end
