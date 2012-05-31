@@ -173,6 +173,17 @@ describe "Tagger" do
           ]
         end
       end
+
+      context "with uid passed" do
+        it "should return an array of hashed with the name and uid" do
+          tag1_id = @user.tagalong_tags.where(:name => 'tag1').first.id
+          tag2_id = @user.tagalong_tags.where(:name => 'tag2').first.id
+          @user.tags_including(:uid => true).should == [
+            {:name => 'tag1', :uid => tag1_id},
+            {:name => 'tag2', :uid => tag2_id}
+          ]
+        end
+      end
     end
 
     describe "#tags_matching" do

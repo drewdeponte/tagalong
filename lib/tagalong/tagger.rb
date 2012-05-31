@@ -75,6 +75,9 @@ module Tagalong
           if options[:has_been_tagged]
             hash[:has_been_tagged] = !tag.used.nil?
           end
+          if options[:uid]
+            hash[:uid] = tag.id
+          end
           out << hash
         end
         
