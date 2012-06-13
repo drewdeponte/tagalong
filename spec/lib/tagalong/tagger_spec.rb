@@ -190,6 +190,15 @@ describe "Tagger" do
             { :name => 'foo bar kitty' }
           ]
         end
+
+        it "returns a limited number of hashes based on the limit you specified as the secondary command argument" do
+          @user.tagalong_tags.create!(:name => "foo bar kitty", :number_of_references => 1)
+          @user.tagalong_tags.create!(:name => "bar foo house", :number_of_references => 3)
+          @user.tagalong_tags.create!(:name => "hello foo bar town", :number_of_references => 2)
+          @user.tags_matching("foo bar", 1).should == [
+            { :name => 'hello foo bar town' }
+          ]
+        end
       end
 
       context "have enabled sunspot", :search => true do
@@ -203,14 +212,23 @@ describe "Tagger" do
           @user.tagalong_tags.create!(:name => "bar foo house", :number_of_references => 3)
           @user.tagalong_tags.create!(:name => "hello foo bar town", :number_of_references => 2)
 
-          # Sunspot.remove_all(Tagalong::TagalongTag)
-          # Sunspot.index!(Tagalong::TagalongTag.all)
-          # Sunspot.commit
           Tagalong::TagalongTag.reindex
 
           @user.tags_matching("foo bar").should == [
             { :name => 'hello foo bar town', :number_of_references => 2 },
             { :name => 'foo bar kitty', :number_of_references => 1 }
+          ]
+        end
+
+        it "returns a limited number of hashes based on the limit specified as the secondary arguement" do
+          @user.tagalong_tags.create!(:name => "foo bar kitty", :number_of_references => 1)
+          @user.tagalong_tags.create!(:name => "bar foo house", :number_of_references => 3)
+          @user.tagalong_tags.create!(:name => "hello foo bar town", :number_of_references => 2)
+
+          Tagalong::TagalongTag.reindex
+
+          @user.tags_matching("foo bar", 1).should == [
+            { :name => 'hello foo bar town', :number_of_references => 2 }
           ]
         end
       end
