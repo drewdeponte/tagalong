@@ -2,6 +2,8 @@
 
 [![Build Status](https://secure.travis-ci.org/cyphactor/tagalong.png?branch=master)](http://travis-ci.org/cyphactor/tagalong)
 
+[![Logo](http://github.com/cyphactor/tagalong/raw/master/assets/tagalong.png)]
+
 [Tagalong](http://github.com/cyphactor/tagalong) is a Rails tagging plugin that is intended to be clean, efficient, and simple. I have tried hard to keep the API slim and intelligable in terms of Object Oriented Programming. I focused heavily on this as I feel most other Rails tagging plugins seriously neglect OO in their APIs.
 
 The other key differentiation between [Tagalong](http://github.com/cyphactor/tagalong) and other tagging libraries is the relational database structure behind the scenes. This database structure allows [Tagalong](http://github.com/cyphactor/tagalong) to provide not only an Object Oriented API, but also a set of features that help differentiate it from other Rails tagging plugins.
