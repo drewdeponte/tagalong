@@ -15,7 +15,7 @@ Gem::Specification.new do |gem|
   gem.require_paths = ["lib"]
   gem.version       = Tagalong::VERSION
 
-  gem.add_dependency "activerecord"
+  gem.add_dependency "activerecord", ">= 3.0.0"
   gem.add_development_dependency "sqlite3"
   gem.add_development_dependency "rspec"
   gem.add_development_dependency "rake"
