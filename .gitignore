@@ -18,3 +18,4 @@ tmp
 spec/debug.log
 *.sqlite3
 sunspot-solr.pid
+*.sw[ponmlk]
