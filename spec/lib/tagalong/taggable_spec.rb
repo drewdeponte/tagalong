@@ -37,6 +37,18 @@ describe "Taggable" do
         @contact.tags.should == ["doopty", "hoopty", "toopty"]
       end
     end
+
+    describe "dependent on destroy" do
+      let(:user) { User.create!(:name => "My Owner") }
+      let(:contact) { Contact.create!(:name => "My Taggable") }
+
+      it "removes the tagalong_taggings when destroyed" do
+        tag = user.tagalong_tags.create!(:name => "foo")
+        contact.tagalong_taggings.create!(:tagalong_tag_id => tag.id)
+        contact.destroy
+        expect(Tagalong::TagalongTagging.count).to be(0)
+      end
+    end
   end
 
   describe "Isolation" do

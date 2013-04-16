@@ -7,7 +7,7 @@ module Tagalong
     module ClassMethods
       def tagalong_tagger
         class_eval do
-          has_many :tagalong_tags, :class_name => 'Tagalong::TagalongTag', :as => :tagger
+          has_many :tagalong_tags, :class_name => 'Tagalong::TagalongTag', :as => :tagger, :dependent => :destroy
           include Tagalong::Tagger::InstanceMethods
         end
       end
